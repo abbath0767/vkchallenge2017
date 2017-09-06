@@ -3,4 +3,9 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <!--main activity-->
+    <color name="cornflower_blue">#5692d7</color>
+    <color name="cool_blue">#4680c2</color>
+    <color name="white_button_transperent">#3dffffff</color>
 </resources>

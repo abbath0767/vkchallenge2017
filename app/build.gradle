@@ -19,10 +19,28 @@ android {
     }
 }
 
+ext {
+    timber = '4.5.1'
+    moxy = '1.4.6'
+    butterknife = '8.5.1'
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:26.0.2'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    compile project(':vksdk_library')
+
+    compile "com.jakewharton.timber:timber:$timber"
+
+    compile "com.arello-mobile:moxy:$moxy"
+    compile "com.arello-mobile:moxy-app-compat:$moxy"
+    annotationProcessor "com.arello-mobile:moxy-compiler:$moxy"
+
+    compile "com.jakewharton:butterknife:$butterknife"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$butterknife"
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
