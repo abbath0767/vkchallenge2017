@@ -2,6 +2,70 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/post_tab_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="92dp"
+        android:layout_marginRight="92dp"
+        app:tabMode="fixed"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <android.support.design.widget.TabItem
+            android:id="@+id/post_tab_item_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tab_post"/>
+
+        <android.support.design.widget.TabItem
+            android:id="@+id/post_tab_item_history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tab_history"/>
+
+    </android.support.design.widget.TabLayout>
+
+    <ImageButton
+        android:id="@+id/post_toolbar_left_button"
+        android:src="@drawable/ic_toolbar_font"
+        style="@style/ImageButtonToolbar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        />
+
+    <ImageButton
+        android:id="@+id/post_toolbar_right_button"
+        android:src="@drawable/ic_toolbar_sticker"
+        style="@style/ImageButtonToolbar"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/post_et_hint"
+        android:background="@android:color/transparent"
+        android:gravity="center"
+        android:textSize="@dimen/post_et_text_size"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/post_tab_layout"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/post_bottom_bar"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <com.ng.vkchallenge2017.ui.view.BottomBar
+        android:id="@+id/post_bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/bottom_bar_height"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        />
 
 </android.support.constraint.ConstraintLayout>

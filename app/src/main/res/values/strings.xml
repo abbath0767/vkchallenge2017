@@ -1,6 +1,15 @@
 <resources>
+
+    <!--base-->
     <string name="app_name">VKChallenge2017</string>
     <integer name="com_vk_sdk_AppId">6175214</integer>
 
+    <!--login-->
     <string name="enter_from_vk">Войти через вконтакте</string>
+
+    <!--post-->
+    <string name="tab_post">Запись</string>
+    <string name="tab_history">История</string>
+    <string name="post_et_hint">Что у вас нового?</string>
+    <string name="action_sent">Отправить</string>
 </resources>

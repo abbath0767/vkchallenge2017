@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/bottom_bar_recycler"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/bottom_bar_send_button"
+        />
+
+    <Button
+        android:id="@+id/bottom_bar_send_button"
+        android:text="@string/action_sent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/button_padding_action_send"
+        android:paddingLeft="@dimen/button_padding_action_send_horizontal"
+        android:paddingRight="@dimen/button_padding_action_send_horizontal"
+        android:paddingTop="@dimen/button_padding_action_send"
+        android:textSize="13sp"
+        android:background="@drawable/post_btn_sent_button"
+        style="@style/LoginButtonStyle"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/bottom_bar_recycler"
+        />
+
+</merge>

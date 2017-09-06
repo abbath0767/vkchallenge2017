@@ -3,7 +3,9 @@ package com.ng.vkchallenge2017.ui.activity;
 import android.os.Bundle;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
+import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.ng.vkchallenge2017.R;
+import com.ng.vkchallenge2017.presentation.PostPresenter;
 import com.ng.vkchallenge2017.view.PostView;
 
 import butterknife.ButterKnife;
@@ -13,6 +15,9 @@ import butterknife.ButterKnife;
  */
 
 public class PostActivity extends MvpAppCompatActivity implements PostView {
+
+    @InjectPresenter
+    PostPresenter mPostPresenter;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {

@@ -8,6 +8,17 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="LoginButtonStyle" parent="Widget.AppCompat.Button.Borderless"/>
+    <style name="LoginButtonStyle" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:textColor">@android:color/white</item>
+        <!--<item name="android:radius">@dimen/button_default_padding</item>-->
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="ImageButtonToolbar" parent="Base.Widget.AppCompat.ImageButton">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:layout_width">@dimen/toolbar_button_border_size</item>
+        <item name="android:layout_height">@dimen/toolbar_button_border_size</item>
+        <item name="android:layout_margin">@dimen/toolbar_button_border_margin</item>
+    </style>
 
 </resources>
