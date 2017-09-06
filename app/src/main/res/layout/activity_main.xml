@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/main_activity_padding"
-    tools:context="com.ng.vkchallenge2017.MainActivity">
+    tools:context="com.ng.vkchallenge2017.ui.activity.MainActivity">
 
     <ImageView
         android:layout_width="@dimen/main_activity_icon_logo_width"
