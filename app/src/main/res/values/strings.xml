@@ -10,6 +10,6 @@
     <!--post-->
     <string name="tab_post">Запись</string>
     <string name="tab_history">История</string>
-    <string name="post_et_hint">Что у вас нового?</string>
+    <string name="post_et_hint">Что у Вас нового?</string>
     <string name="action_sent">Отправить</string>
 </resources>

@@ -2,26 +2,45 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
        xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <View
+        android:id="@+id/bar_devider_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/post_view_devider_height"
+        android:background="@color/black_with_big_transperent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/bottom_bar_recycler"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/bottom_bar_send_button"
         />
 
+    <View
+        android:id="@+id/bor_devider_vertical"
+        android:layout_width="@dimen/post_view_devider_height"
+        android:layout_height="match_parent"
+        android:background="@color/black_with_big_transperent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/bottom_bar_recycler"
+        />
+
     <Button
         android:id="@+id/bottom_bar_send_button"
         android:text="@string/action_sent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/button_padding_action_send"
-        android:paddingLeft="@dimen/button_padding_action_send_horizontal"
-        android:paddingRight="@dimen/button_padding_action_send_horizontal"
-        android:paddingTop="@dimen/button_padding_action_send"
+        android:layout_width="@dimen/post_button_send_width"
+        android:layout_height="@dimen/post_button_send_height"
+        android:layout_marginBottom="@dimen/button_margin_action_send"
+        android:layout_marginLeft="@dimen/button_margin_action_send_horizontal"
+        android:layout_marginRight="@dimen/button_margin_action_send_horizontal"
+        android:layout_marginTop="@dimen/button_margin_action_send"
         android:textSize="13sp"
         android:background="@drawable/post_btn_sent_button"
         style="@style/LoginButtonStyle"

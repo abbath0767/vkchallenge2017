@@ -12,6 +12,9 @@
         android:layout_marginLeft="92dp"
         android:layout_marginRight="92dp"
         app:tabMode="fixed"
+        android:scaleY="-1"
+        app:tabTextColor="@color/post_tab_not_selected_text"
+        app:tabSelectedTextColor="@color/post_tab_selected_text"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
@@ -45,19 +48,32 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
+    
+    <View
+        android:id="@+id/post_devider_top"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/post_view_devider_height"
+        android:background="@color/black_with_big_transperent"
+        app:layout_constraintTop_toBottomOf="@id/post_tab_layout"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
 
     <EditText
-        android:layout_width="wrap_content"
+        android:id="@+id/post_edit_text"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/post_et_hint"
         android:background="@android:color/transparent"
+        android:inputType="text|textMultiLine|textCapSentences|textNoSuggestions"
         android:gravity="center"
         android:textSize="@dimen/post_et_text_size"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/post_tab_layout"
+        android:layout_marginLeft="@dimen/post_et_horizontal_margin"
+        android:layout_marginRight="@dimen/post_et_horizontal_margin"
+        app:layout_constraintTop_toBottomOf="@id/post_devider_top"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/post_bottom_bar"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/post_bottom_bar"/>
 
     <com.ng.vkchallenge2017.ui.view.BottomBar
         android:id="@+id/post_bottom_bar"
