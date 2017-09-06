@@ -21,6 +21,7 @@ public class BottomBar extends ConstraintLayout {
 
     @BindView(R.id.bottom_bar_recycler)
     RecyclerView mRecyclerView;
+    private BottomSquareRVAdapter mRVAdapter;
     @BindView(R.id.bottom_bar_send_button)
     Button mSentButton;
 
@@ -52,7 +53,10 @@ public class BottomBar extends ConstraintLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+    }
 
-        Timber.i("onFinishInflate. rv null? %b, btn null? %b", mRecyclerView == null, mSentButton == null);
+    public void initRv() {
+        mRVAdapter = new BottomSquareRVAdapter(getContext());
+
     }
 }

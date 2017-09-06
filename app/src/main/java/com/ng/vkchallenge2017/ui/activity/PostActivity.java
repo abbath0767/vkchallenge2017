@@ -13,6 +13,7 @@ import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.ng.vkchallenge2017.R;
 import com.ng.vkchallenge2017.presentation.PostPresenter;
+import com.ng.vkchallenge2017.ui.view.BottomBar;
 import com.ng.vkchallenge2017.view.PostView;
 
 import butterknife.BindView;
@@ -32,6 +33,8 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     //todo add border ! (140 character!)
     @BindView(R.id.post_edit_text)
     EditText mPostEditText;
+    @BindView(R.id.post_bottom_bar)
+    BottomBar mBottomBar;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -53,5 +56,6 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     }
 
     private void disableClickAnimation() {
+
     }
 }

@@ -9,8 +9,14 @@
     <color name="cornflower_blue">#5692d7</color>
     <color name="cool_blue">#4680c2</color>
     <color name="white_button_transperent">#3dffffff</color>
+
+    <!--post activity-->
     <color name="blue_button_transperent">#7a528bcc</color>
     <color name="post_tab_selected_text">#528bcc</color>
     <color name="post_tab_not_selected_text">#b7528bcc</color>
     <color name="black_with_big_transperent">#1e000000</color>
+
+    <color name="gray_square">#ebebeb</color>
+
+
 </resources>
