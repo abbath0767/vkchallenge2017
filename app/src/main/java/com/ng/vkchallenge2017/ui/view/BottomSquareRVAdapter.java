@@ -6,11 +6,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -75,6 +77,10 @@ public class BottomSquareRVAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         @BindView(R.id.bottom_bar_square)
         ImageView mImageView;
+        @BindView(R.id.bottom_bar_card)
+        CardView mCardView;
+        @BindView(R.id.bottom_square_border)
+        View border;
 
         public SquareViewHolder(final View itemView) {
             super(itemView);
@@ -86,41 +92,44 @@ public class BottomSquareRVAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         @Override
         public void onClick(final View view) {
             Timber.i("onClick on square!!! position %d", getAdapterPosition());
+            mCardView.setSelected(!mCardView.isSelected());
+            if (mCardView.isSelected()) {
+                Timber.i("onClick border");
+                border.bringToFront();
+                border.requestLayout();
+                border.invalidate();
+            } else {
+                Timber.i("onClick border view ");
+                mImageView.bringToFront();
+                mImageView.requestLayout();
+                mImageView.invalidate();
+            }
+
+//            border.setVisibility(mCardView.isSelected() ? View.VISIBLE : View.GONE);
         }
 
         public void bindSquare(@NonNull final BottomSquareBase square, @NonNull final Context context) {
             Timber.i("bindSquare. type %s", square.getClass().getSimpleName());
-            RoundedBitmapDrawable rbd;
-            Resources res = context.getResources();
             switch (square.getType()) {
                 case DEFAULT:
-                {
-                    Timber.i(">>>bindSquare. square: %s", res.getResourceName((int)square.getResource()));
-                    rbd = RoundedBitmapDrawableFactory.create(res, BitmapFactory.decodeResource(res, (int)square.getResource()));
-                    rbd.setCornerRadius(res.getDimension(R.dimen.square_corner));
-//                    rbd.getBitmap().getColo
-                    Timber.i("bindSquare %b", rbd.getBitmap());
-                    mImageView.setImageDrawable(rbd);
+                case ACTION: {
+                    mImageView.setImageResource((int) square.getResource());
+                    mImageView.setBackgroundColor(context.getResources().getColor(R.color.blue_button_transperent_24));
                     break;
                 }
-                case ACTION:
                 case THUMB: {
-                    rbd = RoundedBitmapDrawableFactory.create(res, BitmapFactory.decodeResource(res, (int)square.getResource()));
-                    rbd.setCornerRadius(res.getDimension(R.dimen.square_corner));
-                    mImageView.setImageDrawable(rbd);
+                    mImageView.setImageResource((int) square.getResource());
                     break;
                 }
                 case COLOR: {
-                    GradientDrawable shape = GradientDrawableFactory.getGradient(
-                            ((GradientColours) square.getResource()).getStartColour(),
-                            ((GradientColours) square.getResource()).getEndColour(),
-                            GradientDrawable.Orientation.TL_BR,
-                            context);
-                    shape.setCornerRadius(res.getDimension(R.dimen.square_corner));
-                    mImageView.setBackgroundDrawable(shape);
-
-                    break;}
-
+                    mImageView.setBackgroundDrawable(
+                            GradientDrawableFactory.getGradient(
+                                    ((GradientColours) square.getResource()).getStartColour(),
+                                    ((GradientColours) square.getResource()).getEndColour(),
+                                    GradientDrawable.Orientation.TL_BR,
+                                    context));
+                    break;
+                }
             }
         }
     }
