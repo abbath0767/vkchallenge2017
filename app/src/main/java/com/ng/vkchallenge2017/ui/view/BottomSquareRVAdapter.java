@@ -35,28 +35,34 @@ import timber.log.Timber;
  * Created by nikitagusarov on 06.09.17.
  */
 
-public class BottomSquareRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class BottomSquareRVAdapter extends RecyclerView.Adapter<BottomSquareRVAdapter.SquareViewHolder> {
 
     @NonNull
     private Context mContext;
     @Nullable
     private List<BottomSquareBase> mSquares;
 
+    private int selectedItem = 0;
+
     BottomSquareRVAdapter(@NonNull final Context context) {
         mContext = context;
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
+    public SquareViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
+        Timber.i("onCreateViewHolder");
         View view = LayoutInflater.from(mContext).inflate(R.layout.item_bottom_bar_square, parent, false);
 
         return new SquareViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
-        if (mSquares != null)
-            ((SquareViewHolder) holder).bindSquare(mSquares.get(position), mContext);
+    public void onBindViewHolder(final SquareViewHolder holder, final int position) {
+        Timber.i("onBindViewHolder %d, type: %s, hash %d", position, mSquares.get(position).getType(), holder.hashCode());
+        if (mSquares != null) {
+            holder.bindSquare(mSquares.get(position), mContext);
+            holder.setChecked(position == selectedItem);
+        }
     }
 
     @Override
@@ -67,22 +73,27 @@ public class BottomSquareRVAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             return 0;
     }
 
+    @Override
+    public long getItemId(final int position) {
+        return super.getItemId(position);
+    }
+
     public void setSquares(@NonNull final List<BottomSquareBase> squares) {
         Timber.i("setSquares. list: %s", Arrays.toString(squares.toArray()));
         mSquares = squares;
         notifyDataSetChanged();
     }
 
-    public static class SquareViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class SquareViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @BindView(R.id.bottom_bar_square)
         ImageView mImageView;
         @BindView(R.id.bottom_bar_card)
         CardView mCardView;
         @BindView(R.id.bottom_square_border_inner)
-        View mBordeInner;
+        View mBorderInner;
         @BindView(R.id.bottom_square_border_outher)
-        View mBordeOuther;
+        View mBorderOuther;
 
         public SquareViewHolder(final View itemView) {
             super(itemView);
@@ -93,22 +104,30 @@ public class BottomSquareRVAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         @Override
         public void onClick(final View view) {
-            Timber.i("onClick on square!!! position %d", getAdapterPosition());
-            mCardView.setSelected(!mCardView.isSelected());
-            if (mCardView.isSelected()) {
-                mBordeInner.bringToFront();
-                mBordeOuther.bringToFront();
-//                mBordeInner.requestLayout();
-//                mBordeInner.invalidate();
+            Timber.i("onClick on square! position %d", getAdapterPosition());
+            selectedItem = getAdapterPosition();
+            notifyDataSetChanged();
+        }
+
+        private void invalidateView(final boolean selected) {
+            if (selected) {
+                mBorderInner.bringToFront();
+                mBorderOuther.setVisibility(View.VISIBLE);
+                mBorderOuther.bringToFront();
+                mBorderInner.requestLayout();
+                mBorderOuther.requestLayout();
+                mBorderInner.invalidate();
+                mBorderOuther.invalidate();
             } else {
                 mImageView.bringToFront();
                 mImageView.requestLayout();
                 mImageView.invalidate();
+                mBorderOuther.setVisibility(View.GONE);
             }
         }
 
         public void bindSquare(@NonNull final BottomSquareBase square, @NonNull final Context context) {
-            Timber.i("bindSquare. type %s", square.getClass().getSimpleName());
+            Timber.i("bindSquare, type %s", square.getType());
             switch (square.getType()) {
                 case DEFAULT:
                 case ACTION: {
@@ -130,6 +149,12 @@ public class BottomSquareRVAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     break;
                 }
             }
+        }
+
+        public void setChecked(@NonNull final boolean checked) {
+            Timber.i("setChecked %b", checked);
+            mCardView.setSelected(checked);
+            invalidateView(checked);
         }
     }
 }

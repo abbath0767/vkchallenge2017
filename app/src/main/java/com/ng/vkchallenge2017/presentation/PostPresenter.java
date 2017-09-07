@@ -31,4 +31,7 @@ public class PostPresenter extends MvpPresenter<PostView> {
         super.onFirstViewAttach();
         getViewState().setBottomBarRecycler(mSquareRepository.getSquares());
     }
+
+    public void click() {
+    }
 }

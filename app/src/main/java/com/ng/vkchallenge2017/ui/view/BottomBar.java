@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
 
 import com.ng.vkchallenge2017.R;
@@ -29,7 +30,6 @@ public class BottomBar extends ConstraintLayout {
     Button mSentButton;
 
     private LayoutInflater mInflater;
-    private List<BottomSquareBase> mSquares;
     private BottomSquareRVAdapter mRVAdapter;
 
     public BottomBar(final Context context) {
@@ -54,8 +54,10 @@ public class BottomBar extends ConstraintLayout {
         mInflater.inflate(R.layout.bottom_bar, this, true);
         ButterKnife.bind(this);
 
-//        mRecyclerView.setHasFixedSize(true);
+
+        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        mRecyclerView.getRecycledViewPool().setMaxRecycledViews(0, 0);
         mRVAdapter = new BottomSquareRVAdapter(getContext());
         mRecyclerView.setAdapter(mRVAdapter);
     }
@@ -66,7 +68,6 @@ public class BottomBar extends ConstraintLayout {
     }
 
     public void setSquares(final List<BottomSquareBase> squares) {
-        mSquares = squares;
         mRVAdapter.setSquares(squares);
     }
 }

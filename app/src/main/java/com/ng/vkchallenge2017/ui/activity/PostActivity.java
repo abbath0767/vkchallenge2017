@@ -15,6 +15,7 @@ import com.ng.vkchallenge2017.R;
 import com.ng.vkchallenge2017.model.square.BottomSquareBase;
 import com.ng.vkchallenge2017.presentation.PostPresenter;
 import com.ng.vkchallenge2017.ui.view.BottomBar;
+import com.ng.vkchallenge2017.ui.view.BottomSquareRVAdapter;
 import com.ng.vkchallenge2017.view.PostView;
 
 import java.util.List;
