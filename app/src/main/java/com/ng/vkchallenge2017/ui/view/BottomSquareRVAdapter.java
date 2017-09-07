@@ -1,9 +1,15 @@
 package com.ng.vkchallenge2017.ui.view;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -83,11 +89,15 @@ public class BottomSquareRVAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         public void bindSquare(@NonNull final BottomSquareBase square, @NonNull final Context context) {
             Timber.i("bindSquare. type %s", square.getClass().getSimpleName());
+            RoundedBitmapDrawable rbd;
+            Resources res = context.getResources();
             switch (square.getType()) {
                 case DEFAULT:
                 case ACTION:
                 case THUMB: {
-                    mImageView.setImageResource((int) square.getResource());
+                    rbd = RoundedBitmapDrawableFactory.create(res, BitmapFactory.decodeResource(res, (int)square.getResource()));
+                    rbd.setCornerRadius(res.getDimension(R.dimen.square_corner));
+                    mImageView.setImageDrawable(rbd);
                     break;
                 }
                 case COLOR: {
@@ -97,8 +107,8 @@ public class BottomSquareRVAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                                     ((GradientColours) square.getResource()).getEndColour(),
                                     GradientDrawable.Orientation.TL_BR,
                                     context));
-                    break;
-                }
+                    break;}
+
             }
         }
     }

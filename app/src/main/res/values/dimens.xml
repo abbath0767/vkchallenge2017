@@ -26,5 +26,6 @@
 
     <!--default-->
     <dimen name="button_default_padding">4dp</dimen>
+    <dimen name="square_corner">4dp</dimen>
 
 </resources>
