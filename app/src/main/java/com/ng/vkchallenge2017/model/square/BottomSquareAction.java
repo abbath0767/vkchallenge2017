@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
  * Created by nikitagusarov on 07.09.17.
  */
 
-public class BottomSquareAction extends BottomSquareBase implements Resourcable<Integer>{
+public class BottomSquareAction extends BottomSquareBase<Integer>{
 
     @NonNull private int mResource;
 

@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
  * Created by nikitagusarov on 07.09.17.
  */
 
-public class BottomSquareColourGradient extends BottomSquareBase implements Resourcable<GradientColours> {
+public class BottomSquareColourGradient extends BottomSquareBase<GradientColours> {
 
     @NonNull private GradientColours mResource;
 

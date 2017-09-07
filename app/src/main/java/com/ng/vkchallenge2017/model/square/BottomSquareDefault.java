@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
  * Created by nikitagusarov on 07.09.17.
  */
 
-public class BottomSquareDefault extends BottomSquareBase implements Resourcable<Integer> {
+public class BottomSquareDefault extends BottomSquareBase<Integer> {
 
     //standart square have only one colour
     @NonNull private int mResource;

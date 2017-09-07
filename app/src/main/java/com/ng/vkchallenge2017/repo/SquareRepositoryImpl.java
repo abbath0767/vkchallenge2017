@@ -16,23 +16,39 @@ import java.util.List;
 
 public class SquareRepositoryImpl implements SquareRepository{
 
+    private static SquareRepository instance;
+    public static SquareRepository getInstance() {
+        if (instance == null) {
+            instance = new SquareRepositoryImpl();
+        }
+        return instance;
+    }
+
+    private SquareRepositoryImpl() {
+        initSquares();
+    }
+
+    private List<BottomSquareBase> mSquares;
+
+    private void initSquares() {
+        mSquares = new ArrayList<>();
+
+        mSquares.add(new BottomSquareDefault(R.color.gray_square));
+
+        mSquares.add(new BottomSquareColourGradient(R.color.blue_square_start, R.color.blue_square_end));
+        mSquares.add(new BottomSquareColourGradient(R.color.green_square_start, R.color.green_square_end));
+        mSquares.add(new BottomSquareColourGradient(R.color.yellow_square_start, R.color.yellow_square_end));
+        mSquares.add(new BottomSquareColourGradient(R.color.pink_square_start, R.color.pink_square_end));
+        mSquares.add(new BottomSquareColourGradient(R.color.violet_square_start, R.color.pink_square_end));
+
+        mSquares.add(new BottomSquareThumb(R.drawable.thumb_beach));
+        mSquares.add(new BottomSquareThumb(R.drawable.thumb_stars));
+
+        mSquares.add(new BottomSquareAction(R.drawable.ic_toolbar_new));
+    }
+
     @Override
     public List<BottomSquareBase> getSquares() {
-        List<BottomSquareBase> list = new ArrayList<>();
-
-        list.add(new BottomSquareDefault(R.color.gray_square));
-
-        list.add(new BottomSquareColourGradient(R.color.blue_square_start, R.color.blue_square_end));
-        list.add(new BottomSquareColourGradient(R.color.green_square_start, R.color.green_square_end));
-        list.add(new BottomSquareColourGradient(R.color.yellow_square_start, R.color.yellow_square_end));
-        list.add(new BottomSquareColourGradient(R.color.pink_square_start, R.color.pink_square_end));
-        list.add(new BottomSquareColourGradient(R.color.violet_square_start, R.color.pink_square_end));
-
-        list.add(new BottomSquareThumb(R.drawable.thumb_beach));
-        list.add(new BottomSquareThumb(R.drawable.thumb_stars));
-
-        list.add(new BottomSquareAction(R.drawable.ic_toolbar_new));
-
-        return list;
+        return mSquares;
     }
 }

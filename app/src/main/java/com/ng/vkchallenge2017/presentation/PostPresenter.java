@@ -23,19 +23,12 @@ public class PostPresenter extends MvpPresenter<PostView> {
     private SquareRepository mSquareRepository;
 
     public PostPresenter() {
-        mSquareRepository = new SquareRepositoryImpl();
+        mSquareRepository = SquareRepositoryImpl.getInstance();
     }
 
     @Override
     protected void onFirstViewAttach() {
         super.onFirstViewAttach();
-
-        initAndShowBottomBarRecycler();
+        getViewState().setBottomBarRecycler(mSquareRepository.getSquares());
     }
-
-    private void initAndShowBottomBarRecycler() {
-        List<BottomSquareBase> squares = mSquareRepository.getSquares();
-
-    }
-
 }

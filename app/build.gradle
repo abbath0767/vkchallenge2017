@@ -23,6 +23,7 @@ ext {
     timber = '4.5.1'
     moxy = '1.4.6'
     butterknife = '8.5.1'
+    leak_canary = '1.5.1'
 }
 
 dependencies {
@@ -41,6 +42,8 @@ dependencies {
 
     compile "com.jakewharton:butterknife:$butterknife"
     annotationProcessor "com.jakewharton:butterknife-compiler:$butterknife"
+
+    compile "com.squareup.leakcanary:leakcanary-android:$leak_canary"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'

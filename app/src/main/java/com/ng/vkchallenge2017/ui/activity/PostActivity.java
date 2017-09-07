@@ -12,9 +12,12 @@ import android.widget.TextView;
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.ng.vkchallenge2017.R;
+import com.ng.vkchallenge2017.model.square.BottomSquareBase;
 import com.ng.vkchallenge2017.presentation.PostPresenter;
 import com.ng.vkchallenge2017.ui.view.BottomBar;
 import com.ng.vkchallenge2017.view.PostView;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,5 +60,10 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
 
     private void disableClickAnimation() {
 
+    }
+
+    @Override
+    public void setBottomBarRecycler(final List<BottomSquareBase> squares) {
+        mBottomBar.setSquares(squares);
     }
 }

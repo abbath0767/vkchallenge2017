@@ -2,12 +2,16 @@ package com.ng.vkchallenge2017.ui.view;
 
 import android.content.Context;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.Button;
 
 import com.ng.vkchallenge2017.R;
+import com.ng.vkchallenge2017.model.square.BottomSquareBase;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,11 +25,12 @@ public class BottomBar extends ConstraintLayout {
 
     @BindView(R.id.bottom_bar_recycler)
     RecyclerView mRecyclerView;
-    private BottomSquareRVAdapter mRVAdapter;
     @BindView(R.id.bottom_bar_send_button)
     Button mSentButton;
 
-    LayoutInflater mInflater;
+    private LayoutInflater mInflater;
+    private List<BottomSquareBase> mSquares;
+    private BottomSquareRVAdapter mRVAdapter;
 
     public BottomBar(final Context context) {
         super(context);
@@ -48,6 +53,11 @@ public class BottomBar extends ConstraintLayout {
     private void initView() {
         mInflater.inflate(R.layout.bottom_bar, this, true);
         ButterKnife.bind(this);
+
+//        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        mRVAdapter = new BottomSquareRVAdapter(getContext());
+        mRecyclerView.setAdapter(mRVAdapter);
     }
 
     @Override
@@ -55,8 +65,8 @@ public class BottomBar extends ConstraintLayout {
         super.onFinishInflate();
     }
 
-    public void initRv() {
-        mRVAdapter = new BottomSquareRVAdapter(getContext());
-
+    public void setSquares(final List<BottomSquareBase> squares) {
+        mSquares = squares;
+        mRVAdapter.setSquares(squares);
     }
 }

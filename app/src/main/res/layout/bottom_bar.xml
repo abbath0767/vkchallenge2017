@@ -16,7 +16,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/bottom_bar_send_button"
@@ -25,7 +25,7 @@
     <View
         android:id="@+id/bor_devider_vertical"
         android:layout_width="@dimen/post_view_devider_height"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/bottom_bar_height"
         android:background="@color/black_with_big_transperent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
