@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -93,6 +94,15 @@ public class BottomSquareRVAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             Resources res = context.getResources();
             switch (square.getType()) {
                 case DEFAULT:
+                {
+                    Timber.i(">>>bindSquare. square: %s", res.getResourceName((int)square.getResource()));
+                    rbd = RoundedBitmapDrawableFactory.create(res, BitmapFactory.decodeResource(res, (int)square.getResource()));
+                    rbd.setCornerRadius(res.getDimension(R.dimen.square_corner));
+//                    rbd.getBitmap().getColo
+                    Timber.i("bindSquare %b", rbd.getBitmap());
+                    mImageView.setImageDrawable(rbd);
+                    break;
+                }
                 case ACTION:
                 case THUMB: {
                     rbd = RoundedBitmapDrawableFactory.create(res, BitmapFactory.decodeResource(res, (int)square.getResource()));
@@ -101,12 +111,14 @@ public class BottomSquareRVAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     break;
                 }
                 case COLOR: {
-                    mImageView.setBackgroundDrawable(
-                            GradientDrawableFactory.getGradient(
-                                    ((GradientColours) square.getResource()).getStartColour(),
-                                    ((GradientColours) square.getResource()).getEndColour(),
-                                    GradientDrawable.Orientation.TL_BR,
-                                    context));
+                    GradientDrawable shape = GradientDrawableFactory.getGradient(
+                            ((GradientColours) square.getResource()).getStartColour(),
+                            ((GradientColours) square.getResource()).getEndColour(),
+                            GradientDrawable.Orientation.TL_BR,
+                            context);
+                    shape.setCornerRadius(res.getDimension(R.dimen.square_corner));
+                    mImageView.setBackgroundDrawable(shape);
+
                     break;}
 
             }

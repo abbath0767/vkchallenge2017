@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 
 public class BottomSquareDefault extends BottomSquareBase<Integer> {
 
-    //standart square have only one colour
     @NonNull private int mResource;
 
     public BottomSquareDefault(@NonNull final int colour) {
