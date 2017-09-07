@@ -10,9 +10,9 @@ public class BottomSquareAction extends BottomSquareBase implements Resourcable<
 
     @NonNull private int mResource;
 
-    public BottomSquareAction(@NonNull final int resource) {
+    public BottomSquareAction(@NonNull final int resourceId) {
         super(BottomSquareType.ACTION);
-        mResource = resource;
+        mResource = resourceId;
     }
 
     @Override

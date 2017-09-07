@@ -16,7 +16,17 @@
     <color name="post_tab_not_selected_text">#b7528bcc</color>
     <color name="black_with_big_transperent">#1e000000</color>
 
+    <!--post activity bottom bar-->
     <color name="gray_square">#ebebeb</color>
-
+    <color name="blue_square_start">#30f3d2</color>
+    <color name="blue_square_end">#2e7ae6</color>
+    <color name="green_square_start">#cbe645</color>
+    <color name="green_square_end">#47b347</color>
+    <color name="yellow_square_start">#ffcc33</color>
+    <color name="yellow_square_end">#ff7733</color>
+    <color name="pink_square_start">#ff3355</color>
+    <color name="pink_square_end">#990f6b</color>
+    <color name="violet_square_start">#f8a6ff</color>
+    <color name="violet_square_end">#6c6cd9</color>
 
 </resources>
