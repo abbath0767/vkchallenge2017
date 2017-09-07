@@ -79,8 +79,10 @@ public class BottomSquareRVAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         ImageView mImageView;
         @BindView(R.id.bottom_bar_card)
         CardView mCardView;
-        @BindView(R.id.bottom_square_border)
-        View border;
+        @BindView(R.id.bottom_square_border_inner)
+        View mBordeInner;
+        @BindView(R.id.bottom_square_border_outher)
+        View mBordeOuther;
 
         public SquareViewHolder(final View itemView) {
             super(itemView);
@@ -94,18 +96,15 @@ public class BottomSquareRVAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             Timber.i("onClick on square!!! position %d", getAdapterPosition());
             mCardView.setSelected(!mCardView.isSelected());
             if (mCardView.isSelected()) {
-                Timber.i("onClick border");
-                border.bringToFront();
-                border.requestLayout();
-                border.invalidate();
+                mBordeInner.bringToFront();
+                mBordeOuther.bringToFront();
+//                mBordeInner.requestLayout();
+//                mBordeInner.invalidate();
             } else {
-                Timber.i("onClick border view ");
                 mImageView.bringToFront();
                 mImageView.requestLayout();
                 mImageView.invalidate();
             }
-
-//            border.setVisibility(mCardView.isSelected() ? View.VISIBLE : View.GONE);
         }
 
         public void bindSquare(@NonNull final BottomSquareBase square, @NonNull final Context context) {

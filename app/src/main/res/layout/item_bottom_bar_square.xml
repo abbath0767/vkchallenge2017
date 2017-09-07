@@ -20,13 +20,20 @@
         >
 
         <View
-            android:id="@+id/bottom_square_border"
-            android:background="@color/green_square_end"
+            android:id="@+id/bottom_square_border_inner"
+            android:background="@drawable/square_checked_corners_inner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <View
+            android:id="@+id/bottom_square_border_outher"
+            android:background="@drawable/square_checked_corners_outher"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
         <ImageView
             android:id="@+id/bottom_bar_square"
+            android:scaleType="center"
             android:layout_width="@dimen/bottom_bar_square_border"
             android:layout_height="@dimen/bottom_bar_square_border"
             />
