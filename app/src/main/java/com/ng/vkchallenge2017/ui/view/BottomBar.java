@@ -1,6 +1,7 @@
 package com.ng.vkchallenge2017.ui.view;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -69,5 +70,9 @@ public class BottomBar extends ConstraintLayout {
 
     public void setSquares(final List<BottomSquareBase> squares) {
         mRVAdapter.setSquares(squares);
+    }
+
+    public void setSquareClickListener(@NonNull final BottomSquareRVAdapter.SquareClickListener listener) {
+        mRVAdapter.setSquareClickListener(listener);
     }
 }

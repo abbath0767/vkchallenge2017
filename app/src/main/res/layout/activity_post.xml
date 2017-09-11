@@ -13,6 +13,7 @@
         android:layout_marginRight="92dp"
         app:tabMode="fixed"
         android:scaleY="-1"
+        android:elevation="2dp"
         app:tabTextColor="@color/post_tab_not_selected_text"
         app:tabSelectedTextColor="@color/post_tab_selected_text"
         app:layout_constraintTop_toTopOf="parent"
@@ -36,6 +37,7 @@
     <ImageButton
         android:id="@+id/post_toolbar_left_button"
         android:src="@drawable/ic_toolbar_font"
+        android:elevation="2dp"
         style="@style/ImageButtonToolbar"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -44,6 +46,7 @@
     <ImageButton
         android:id="@+id/post_toolbar_right_button"
         android:src="@drawable/ic_toolbar_sticker"
+        android:elevation="2dp"
         style="@style/ImageButtonToolbar"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -53,6 +56,7 @@
         android:id="@+id/post_devider_top"
         android:layout_width="match_parent"
         android:layout_height="@dimen/post_view_devider_height"
+        android:elevation="2dp"
         android:background="@color/black_with_big_transperent"
         app:layout_constraintTop_toBottomOf="@id/post_tab_layout"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -70,15 +74,27 @@
         android:textStyle="bold"
         android:layout_marginLeft="@dimen/post_et_horizontal_margin"
         android:layout_marginRight="@dimen/post_et_horizontal_margin"
+        android:elevation="2dp"
         app:layout_constraintTop_toBottomOf="@id/post_devider_top"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/post_bottom_bar"/>
 
+    <com.ng.vkchallenge2017.ui.view.CustomImageView
+        android:id="@+id/post_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/post_devider_top"
+        app:layout_constraintBottom_toTopOf="@id/post_bottom_bar"/>
+
     <com.ng.vkchallenge2017.ui.view.BottomBar
         android:id="@+id/post_bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/bottom_bar_height"
+        android:elevation="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

@@ -4,6 +4,7 @@ import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.SingleStateStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 import com.ng.vkchallenge2017.model.square.BottomSquareBase;
+import com.ng.vkchallenge2017.presentation.PostPresenter;
 
 import java.util.List;
 
@@ -15,4 +16,8 @@ import java.util.List;
 public interface PostView extends MvpView {
 
     void setBottomBarRecycler(List<BottomSquareBase> squares);
+
+    void setUpContent(BottomSquareBase squareBase);
+
+    void setUpMode(PostPresenter.Mode mode);
 }

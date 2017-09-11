@@ -13,6 +13,11 @@ import com.ng.vkchallenge2017.view.PostView;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
+import static com.ng.vkchallenge2017.presentation.PostPresenter.Mode.HISTORY;
+import static com.ng.vkchallenge2017.presentation.PostPresenter.Mode.POST;
+
 /**
  * Created by nikitagusarov on 06.09.17.
  */
@@ -21,6 +26,7 @@ import java.util.List;
 public class PostPresenter extends MvpPresenter<PostView> {
 
     private SquareRepository mSquareRepository;
+    private Mode mMode = POST;
 
     public PostPresenter() {
         mSquareRepository = SquareRepositoryImpl.getInstance();
@@ -32,6 +38,23 @@ public class PostPresenter extends MvpPresenter<PostView> {
         getViewState().setBottomBarRecycler(mSquareRepository.getSquares());
     }
 
-    public void click() {
+    public void onSquareClick(final int position) {
+        Timber.i("onSquareClick, pos: %d", position);
+        getViewState().setUpContent(mSquareRepository.getSquares().get(position));
+    }
+
+    public void tabSelected(final int position) {
+        Timber.i("tabSelected %d", position);
+        if (position == 0) {
+            mMode = POST;
+        } else {
+            mMode = HISTORY;
+        }
+
+        getViewState().setUpMode(mMode);
+    }
+
+    public enum Mode {
+        POST, HISTORY
     }
 }

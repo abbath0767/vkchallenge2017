@@ -42,15 +42,20 @@ public class BottomSquareRVAdapter extends RecyclerView.Adapter<BottomSquareRVAd
     @Nullable
     private List<BottomSquareBase> mSquares;
 
+    @Nullable
+    private SquareClickListener mSquareClickListener;
     private int selectedItem = 0;
 
     BottomSquareRVAdapter(@NonNull final Context context) {
         mContext = context;
     }
 
+    public void setSquareClickListener(final SquareClickListener squareClickListener) {
+        mSquareClickListener = squareClickListener;
+    }
+
     @Override
     public SquareViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
-        Timber.i("onCreateViewHolder");
         View view = LayoutInflater.from(mContext).inflate(R.layout.item_bottom_bar_square, parent, false);
 
         return new SquareViewHolder(view);
@@ -58,7 +63,6 @@ public class BottomSquareRVAdapter extends RecyclerView.Adapter<BottomSquareRVAd
 
     @Override
     public void onBindViewHolder(final SquareViewHolder holder, final int position) {
-        Timber.i("onBindViewHolder %d, type: %s, hash %d", position, mSquares.get(position).getType(), holder.hashCode());
         if (mSquares != null) {
             holder.bindSquare(mSquares.get(position), mContext);
             holder.setChecked(position == selectedItem);
@@ -79,9 +83,12 @@ public class BottomSquareRVAdapter extends RecyclerView.Adapter<BottomSquareRVAd
     }
 
     public void setSquares(@NonNull final List<BottomSquareBase> squares) {
-        Timber.i("setSquares. list: %s", Arrays.toString(squares.toArray()));
         mSquares = squares;
         notifyDataSetChanged();
+    }
+
+    public interface SquareClickListener{
+        void onSquareClick(int position);
     }
 
     public class SquareViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -104,9 +111,15 @@ public class BottomSquareRVAdapter extends RecyclerView.Adapter<BottomSquareRVAd
 
         @Override
         public void onClick(final View view) {
-            Timber.i("onClick on square! position %d", getAdapterPosition());
-            selectedItem = getAdapterPosition();
+            int pos = getAdapterPosition();
+            Timber.i("onClick on square! position %d", pos);
+            selectedItem = pos;
+            if (mSquareClickListener != null) {
+                mSquareClickListener.onSquareClick(pos);
+            }
+
             notifyDataSetChanged();
+
         }
 
         private void invalidateView(final boolean selected) {
@@ -127,7 +140,6 @@ public class BottomSquareRVAdapter extends RecyclerView.Adapter<BottomSquareRVAd
         }
 
         public void bindSquare(@NonNull final BottomSquareBase square, @NonNull final Context context) {
-            Timber.i("bindSquare, type %s", square.getType());
             switch (square.getType()) {
                 case DEFAULT:
                 case ACTION: {
@@ -140,7 +152,7 @@ public class BottomSquareRVAdapter extends RecyclerView.Adapter<BottomSquareRVAd
                     break;
                 }
                 case COLOR: {
-                    mImageView.setBackgroundDrawable(
+                    mImageView.setBackground(
                             GradientDrawableFactory.getGradient(
                                     ((GradientColours) square.getResource()).getStartColour(),
                                     ((GradientColours) square.getResource()).getEndColour(),
@@ -152,7 +164,6 @@ public class BottomSquareRVAdapter extends RecyclerView.Adapter<BottomSquareRVAd
         }
 
         public void setChecked(@NonNull final boolean checked) {
-            Timber.i("setChecked %b", checked);
             mCardView.setSelected(checked);
             invalidateView(checked);
         }

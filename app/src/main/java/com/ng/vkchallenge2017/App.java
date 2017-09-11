@@ -2,6 +2,7 @@ package com.ng.vkchallenge2017;
 
 import android.app.Application;
 
+import com.squareup.leakcanary.LeakCanary;
 import com.vk.sdk.VKSdk;
 
 import timber.log.Timber;
@@ -17,11 +18,16 @@ public class App extends Application {
         super.onCreate();
 
         initTimber();
+        initLeakCanary();
         initVkSdk();
     }
 
     private void initTimber() {
         Timber.plant(new Timber.DebugTree());
+    }
+
+    private void initLeakCanary() {
+        LeakCanary.install(this);
     }
 
     private void initVkSdk() {
