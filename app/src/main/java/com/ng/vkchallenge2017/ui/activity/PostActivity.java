@@ -151,6 +151,7 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     }
 
     private void requestImageView() {
+        mCustomImageView.requestLayout();
         mCustomImageView.calculateAverageColour();
     }
 

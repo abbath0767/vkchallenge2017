@@ -122,7 +122,7 @@ public class CustomImageView extends ConstraintLayout {
 
                 int spec = MeasureSpec.makeMeasureSpec(rest, MeasureSpec.EXACTLY);
                 Timber.i("onMeasure. restSpex: %d", spec);
-
+                setMeasuredDimension(exceptedHeight, rest);
                 super.onMeasure(widthMeasureSpec, spec);
             }
         } else {
@@ -135,6 +135,7 @@ public class CustomImageView extends ConstraintLayout {
         overHeight += ((ConstraintLayout) getParent()).getHeight();
         Timber.i("calculateRest all H: %d", overHeight);
         for (int i = 0; i < ((ConstraintLayout) getParent()).getChildCount(); i++) {
+            Timber.i("calculateRest: %s", ((ConstraintLayout) getParent()).getChildAt(i));
             int minusHeight = 0;
             if (((ConstraintLayout) getParent()).getChildAt(i) instanceof TabLayout) {
                 minusHeight = (((ConstraintLayout) getParent()).getChildAt(i)).getHeight();
