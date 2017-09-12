@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/post_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <android.support.design.widget.TabLayout
         android:id="@+id/post_tab_layout"
@@ -11,14 +12,14 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="92dp"
         android:layout_marginRight="92dp"
-        app:tabMode="fixed"
-        android:scaleY="-1"
         android:elevation="2dp"
-        app:tabTextColor="@color/post_tab_not_selected_text"
-        app:tabSelectedTextColor="@color/post_tab_selected_text"
-        app:layout_constraintTop_toTopOf="parent"
+        android:scaleY="-1"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tabMode="fixed"
+        app:tabSelectedTextColor="@color/post_tab_selected_text"
+        app:tabTextColor="@color/post_tab_not_selected_text">
 
         <android.support.design.widget.TabItem
             android:id="@+id/post_tab_item_post"
@@ -36,41 +37,41 @@
 
     <ImageButton
         android:id="@+id/post_toolbar_left_button"
-        android:src="@drawable/ic_toolbar_font"
-        android:elevation="2dp"
         style="@style/ImageButtonToolbar"
-        app:layout_constraintTop_toTopOf="parent"
+        android:elevation="2dp"
+        android:src="@drawable/ic_toolbar_font"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         />
 
     <ImageButton
         android:id="@+id/post_toolbar_right_button"
-        android:src="@drawable/ic_toolbar_sticker"
-        android:elevation="2dp"
         style="@style/ImageButtonToolbar"
+        android:elevation="2dp"
+        android:src="@drawable/ic_toolbar_sticker"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
-    
+
     <View
         android:id="@+id/post_devider_top"
         android:layout_width="match_parent"
         android:layout_height="@dimen/post_view_devider_height"
-        android:elevation="2dp"
         android:background="@color/black_with_big_transperent"
-        app:layout_constraintTop_toBottomOf="@id/post_tab_layout"
+        android:elevation="2dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/post_tab_layout"/>
 
     <com.ng.vkchallenge2017.ui.view.CustomImageView
         android:id="@+id/post_image_view"
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scaleType="centerCrop"
-        app:layout_constraintRight_toRightOf="parent"
+        android:layout_width="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/post_bottom_bar"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/post_devider_top"
-        app:layout_constraintBottom_toTopOf="@id/post_bottom_bar"/>
+        />
 
     <com.ng.vkchallenge2017.ui.view.BottomBar
         android:id="@+id/post_bottom_bar"

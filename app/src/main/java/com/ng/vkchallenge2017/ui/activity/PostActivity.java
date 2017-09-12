@@ -8,6 +8,8 @@ import android.graphics.Rect;
 import android.graphics.drawable.GradientDrawable;
 import android.inputmethodservice.Keyboard;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.ContentFrameLayout;
 import android.view.View;
@@ -47,7 +49,6 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
 
     @InjectPresenter
     PostPresenter mPostPresenter;
-
     @BindView(R.id.post_tab_layout)
     TabLayout mTabLayout;
     @BindView(R.id.post_image_view)
@@ -139,7 +140,7 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
                 if (thumb instanceof SimpleThumb) {
                     mCustomImageView.setPng(((SimpleThumb) thumb).getResource());
                 } else if (thumb instanceof ThumbAsset) {
-//                    mCustomImageView.setAsset((ThumbAsset)thumb).getResource();
+                    mCustomImageView.setAsset(((ThumbAsset) thumb).getResource());
                 }
 
                 break;
@@ -150,7 +151,6 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     }
 
     private void requestImageView() {
-        mCustomImageView.requestLayout();
         mCustomImageView.calculateAverageColour();
     }
 

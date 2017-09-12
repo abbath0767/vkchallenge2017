@@ -2,6 +2,7 @@ package com.ng.vkchallenge2017.ui.view;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -18,9 +19,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.graphics.Palette;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -30,6 +33,8 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.ng.vkchallenge2017.R;
 import com.ng.vkchallenge2017.presentation.PostPresenter;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -56,7 +61,6 @@ public class CustomImageView extends ConstraintLayout {
     private PostPresenter.Mode mMode = PostPresenter.Mode.POST;
 
     private ColorStateList oldColors;
-
 
     public CustomImageView(final Context context) {
         super(context);
@@ -97,48 +101,49 @@ public class CustomImageView extends ConstraintLayout {
 
     @Override
     protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
-        int overHeight = calculateRest();
-        int overWidth = calculateWidth();
+        int rest = calculateRest();
+//        int overWidth = getMeasuredWidth();
+        Timber.i("onMeasure specs W: %d, H: %d", widthMeasureSpec, heightMeasureSpec);
+        Timber.i("onMeasure get() W: %d, H: %d", getMeasuredWidth(), getMeasuredHeight());
+        Timber.i("onMeasure getSpec() W: %d, H: %d", MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.getSize(heightMeasureSpec));
+        int exceptedHeight = MeasureSpec.getSize(widthMeasureSpec);
+        int realHeight = MeasureSpec.getSize(heightMeasureSpec);
 
+        Timber.i("onMeasure. excepted: %d, real: %d", exceptedHeight, realHeight);
         if (mMode == PostPresenter.Mode.POST) {
-            super.onMeasure(widthMeasureSpec, widthMeasureSpec);
-            Timber.i("onMeasure H %d, W %d", overHeight, overWidth);
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-            if (overWidth > overHeight) {
-                Timber.i("onMeasure NOT");
-                setMeasuredDimension(overWidth, overHeight);
-            } else if (overWidth <= overHeight) {
-                Timber.i("onMeasure SQUARE");
-                setMeasuredDimension(overWidth, overWidth);
+            if (realHeight > exceptedHeight) {
+                Timber.i("onMeasure. need SQUARABLE");
+                super.onMeasure(widthMeasureSpec, widthMeasureSpec);
+            } else {
+                Timber.i("onMeasure.DONT NEED");
+                Timber.i("onMeasure rest: %d", rest);
+
+                int spec = MeasureSpec.makeMeasureSpec(rest, MeasureSpec.EXACTLY);
+                Timber.i("onMeasure. restSpex: %d", spec);
+
+                super.onMeasure(widthMeasureSpec, spec);
             }
-
-//            if (overWidth >= overHeight) {
-////                Timber.i("onMeasure. setDimen: %d x %d", overWidth, overHeight);
-//                setMeasuredDimension(overWidth, overHeight);
-//            } else {
-////                Timber.i("onMeasure, setDimen: %d x %d", getMeasuredWidth(), getMeasuredHeight());
-//                setMeasuredDimension(getMeasuredWidth(), getMeasuredHeight());
-//            }
         } else {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }
     }
 
-    private int calculateWidth() {
-        return ((ConstraintLayout) getParent()).getWidth();
-    }
-
     private int calculateRest() {
         int overHeight = 0;
         overHeight += ((ConstraintLayout) getParent()).getHeight();
+        Timber.i("calculateRest all H: %d", overHeight);
         for (int i = 0; i < ((ConstraintLayout) getParent()).getChildCount(); i++) {
             int minusHeight = 0;
             if (((ConstraintLayout) getParent()).getChildAt(i) instanceof TabLayout) {
                 minusHeight = (((ConstraintLayout) getParent()).getChildAt(i)).getHeight();
                 overHeight -= minusHeight;
+                Timber.i("calculateRest minus Tab: %d", overHeight);
             } else if (((ConstraintLayout) getParent()).getChildAt(i) instanceof BottomBar) {
                 minusHeight = ((ConstraintLayout) getParent()).getChildAt(i).getHeight();
                 overHeight -= minusHeight;
+                Timber.i("calculateRest minus Bot: %d", overHeight);
             }
         }
 
@@ -154,30 +159,83 @@ public class CustomImageView extends ConstraintLayout {
     }
 
     public void setPng(final Integer pngResId) {
-        mImageViewMid.setImageResource(pngResId);
+//        mImageViewMid.setImageResource(pngResId);
+        mImageViewMid.setImageBitmap(decodeSampledBitmapFromResource(mContext.getResources(), pngResId, getWidth(), getHeight()));
+    }
+
+    public Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
+                                                  int reqWidth, int reqHeight) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(res, resId, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeResource(res, resId, options);
+    }
+
+    public int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
+    public void setAsset(final List<Integer> asset) {
+        mImageViewTop.setImageResource(asset.get(0));
+        mImageViewMid.setImageResource(asset.get(1));
+        mImageViewBot.setImageResource(asset.get(2));
     }
 
     //todo make async!
     private int calculateTextColour() {
 
-        Bitmap midBitMap;
-        Timber.i("calculateTextColour. %s", mImageViewMid.getDrawable());
-        if (mImageViewMid.getDrawable() instanceof BitmapDrawable) {
-            midBitMap = ((BitmapDrawable) mImageViewMid.getDrawable()).getBitmap();
-        } else {
-            midBitMap = Bitmap.createBitmap(mImageViewMid.getWidth(), mImageViewMid.getHeight(), Bitmap.Config.RGB_565);
-            Canvas canvas = new Canvas(midBitMap);
-            mImageViewMid.draw(canvas);
+        Bitmap midBitMap = null;
+        try {
+            Timber.i("calculateTextColour. %s", mImageViewMid.getDrawable());
+            if (mImageViewMid.getDrawable() instanceof BitmapDrawable) {
+                midBitMap = ((BitmapDrawable) mImageViewMid.getDrawable()).getBitmap();
+            } else {
+                Timber.i("calculateTextColour. %d", getHeight());
+                if (getWidth() == 0)
+                    return 0;
+                midBitMap = Bitmap.createBitmap(getWidth()/10, getHeight()/10, Bitmap.Config.RGB_565);
+                Canvas canvas = new Canvas(midBitMap);
+                mImageViewMid.draw(canvas);
+            }
+
+            Palette p = new Palette.Builder(midBitMap).generate();
+
+            Palette.Swatch swatch = p.getVibrantSwatch();
+
+            if (swatch == null)
+                return 0;
+            else
+                return swatch.getTitleTextColor();
+        } finally {
+            midBitMap = null;
         }
-
-        Palette p = new Palette.Builder(midBitMap).generate();
-
-        Palette.Swatch swatch = p.getVibrantSwatch();
-
-        if (swatch == null)
-            return 0;
-        else
-            return swatch.getTitleTextColor();
     }
 
     public void calculateAverageColour() {
