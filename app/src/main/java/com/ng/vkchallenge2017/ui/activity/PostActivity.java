@@ -50,22 +50,16 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
 
     @BindView(R.id.post_tab_layout)
     TabLayout mTabLayout;
-    @BindView(R.id.post_edit_text)
-    EditText mPostEditText;
     @BindView(R.id.post_image_view)
     CustomImageView mCustomImageView;
     @BindView(R.id.post_bottom_bar)
     BottomBar mBottomBar;
-
-    private ColorStateList oldColors;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
         ButterKnife.bind(this);
-
-        saveDefaultTextColour();
 
         moveStripToTop();
         //todo
@@ -94,10 +88,6 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
             public void onTabReselected(final TabLayout.Tab tab) {
             }
         });
-    }
-
-    private void saveDefaultTextColour() {
-        oldColors = mPostEditText.getTextColors();
     }
 
     private void setUpKeyListener() {
@@ -157,20 +147,11 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         }
 
         requestImageView();
-        calculateAverageColour();
-    }
-
-    private void calculateAverageColour() {
-        int color = mCustomImageView.calculateTextColour();
-        if (color == 0) {
-            mPostEditText.setTextColor(oldColors);
-        } else {
-            mPostEditText.setTextColor(mCustomImageView.calculateTextColour());
-        }
     }
 
     private void requestImageView() {
         mCustomImageView.requestLayout();
+        mCustomImageView.calculateAverageColour();
     }
 
     private void clearImageView() {

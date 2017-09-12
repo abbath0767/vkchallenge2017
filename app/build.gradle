@@ -24,6 +24,7 @@ ext {
     moxy = '1.4.6'
     butterknife = '8.5.1'
     leak_canary = '1.5.1'
+    glide = '3.8.0'
 }
 
 dependencies {
@@ -48,6 +49,8 @@ dependencies {
     annotationProcessor "com.jakewharton:butterknife-compiler:$butterknife"
 
     compile "com.squareup.leakcanary:leakcanary-android:$leak_canary"
+
+    compile "com.github.bumptech.glide:glide:$glide"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'

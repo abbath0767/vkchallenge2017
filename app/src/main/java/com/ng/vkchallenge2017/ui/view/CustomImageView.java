@@ -1,6 +1,7 @@
 package com.ng.vkchallenge2017.ui.view;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -11,13 +12,22 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.support.design.widget.TabLayout;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.graphics.Palette;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.ng.vkchallenge2017.R;
 import com.ng.vkchallenge2017.presentation.PostPresenter;
 
@@ -31,6 +41,8 @@ import timber.log.Timber;
 
 public class CustomImageView extends ConstraintLayout {
 
+    @BindView(R.id.post_edit_text)
+    EditText mPostEditText;
     @BindView(R.id.image_view_top)
     ImageView mImageViewTop;
     @BindView(R.id.image_view_mid)
@@ -38,25 +50,31 @@ public class CustomImageView extends ConstraintLayout {
     @BindView(R.id.image_view_bot)
     ImageView mImageViewBot;
 
-    private int textColour;
+    private Context mContext;
 
     private LayoutInflater mInflater;
     private PostPresenter.Mode mMode = PostPresenter.Mode.POST;
 
+    private ColorStateList oldColors;
+
+
     public CustomImageView(final Context context) {
         super(context);
+        mContext = context;
         mInflater = LayoutInflater.from(context);
         initView();
     }
 
     public CustomImageView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
+        mContext = context;
         mInflater = LayoutInflater.from(context);
         initView();
     }
 
     public CustomImageView(final Context context, final AttributeSet attrs, final int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        mContext = context;
         mInflater = LayoutInflater.from(context);
         initView();
     }
@@ -64,6 +82,8 @@ public class CustomImageView extends ConstraintLayout {
     private void initView() {
         mInflater.inflate(R.layout.image_collection, this, true);
         ButterKnife.bind(this);
+
+        saveDefaultTextColour();
     }
 
     public void clear() {
@@ -76,30 +96,29 @@ public class CustomImageView extends ConstraintLayout {
     }
 
     @Override
-    //todo 328 pixel MF
     protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
-//        Timber.i("onMeasure. mode: %s", mMode);
-
         int overHeight = calculateRest();
         int overWidth = calculateWidth();
-//        Timber.i("onMeasure. rest H: %d, rest W: %d, measure H: %d, measure W: %d", overHeight, overWidth, heightMeasureSpec, widthMeasureSpec);
 
         if (mMode == PostPresenter.Mode.POST) {
             super.onMeasure(widthMeasureSpec, widthMeasureSpec);
-            ViewGroup.LayoutParams p = getLayoutParams();
-            if (overWidth >= overHeight) {
-//                Timber.i("onMeasure. setDimen: %d x %d", overWidth, overHeight);
+            Timber.i("onMeasure H %d, W %d", overHeight, overWidth);
+
+            if (overWidth > overHeight) {
+                Timber.i("onMeasure NOT");
                 setMeasuredDimension(overWidth, overHeight);
-                p.width = overWidth;
-                p.height = overHeight;
-                setLayoutParams(p);
-            } else {
-//                Timber.i("onMeasure, setDimen: %d x %d", getMeasuredWidth(), getMeasuredHeight());
-                setMeasuredDimension(getMeasuredWidth(), getMeasuredHeight());
-                p.width = overWidth;
-                p.height = overHeight;
-                setLayoutParams(p);
+            } else if (overWidth <= overHeight) {
+                Timber.i("onMeasure SQUARE");
+                setMeasuredDimension(overWidth, overWidth);
             }
+
+//            if (overWidth >= overHeight) {
+////                Timber.i("onMeasure. setDimen: %d x %d", overWidth, overHeight);
+//                setMeasuredDimension(overWidth, overHeight);
+//            } else {
+////                Timber.i("onMeasure, setDimen: %d x %d", getMeasuredWidth(), getMeasuredHeight());
+//                setMeasuredDimension(getMeasuredWidth(), getMeasuredHeight());
+//            }
         } else {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }
@@ -139,17 +158,13 @@ public class CustomImageView extends ConstraintLayout {
     }
 
     //todo make async!
-    public int calculateTextColour() {
-//        mImageViewMid.setDrawingCacheEnabled(true);
-//        mImageViewMid.buildDrawingCache(true);
-//        Bitmap midBitMap = Bitmap.createBitmap(mImageViewMid.getDrawingCache());
-//        mImageViewMid.setDrawingCacheEnabled(false);
+    private int calculateTextColour() {
 
         Bitmap midBitMap;
+        Timber.i("calculateTextColour. %s", mImageViewMid.getDrawable());
         if (mImageViewMid.getDrawable() instanceof BitmapDrawable) {
             midBitMap = ((BitmapDrawable) mImageViewMid.getDrawable()).getBitmap();
         } else {
-            ColorDrawable d = (ColorDrawable) mImageViewMid.getDrawable();
             midBitMap = Bitmap.createBitmap(mImageViewMid.getWidth(), mImageViewMid.getHeight(), Bitmap.Config.RGB_565);
             Canvas canvas = new Canvas(midBitMap);
             mImageViewMid.draw(canvas);
@@ -163,6 +178,19 @@ public class CustomImageView extends ConstraintLayout {
             return 0;
         else
             return swatch.getTitleTextColor();
+    }
+
+    public void calculateAverageColour() {
+        int color = calculateTextColour();
+        if (color == 0) {
+            mPostEditText.setTextColor(oldColors);
+        } else {
+            mPostEditText.setTextColor(color);
+        }
+    }
+
+    private void saveDefaultTextColour() {
+        oldColors = mPostEditText.getTextColors();
     }
 }
 
