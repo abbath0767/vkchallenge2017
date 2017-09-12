@@ -6,17 +6,17 @@ import android.support.annotation.NonNull;
  * Created by nikitagusarov on 07.09.17.
  */
 
-public class BottomSquareThumb extends BottomSquareBase<Integer> {
+public class BottomSquareThumb extends BottomSquareBase<Thumbs> {
 
-    @NonNull private int mResource;
+    @NonNull private Thumbs mResource;
 
-    public BottomSquareThumb(@NonNull final int resourceId) {
+    public BottomSquareThumb(@NonNull final Thumbs resourceId) {
         super(BottomSquareType.THUMB);
         mResource = resourceId;
     }
 
     @Override
-    public Integer getResource() {
+    public Thumbs getResource() {
         return mResource;
     }
 
@@ -34,11 +34,11 @@ public class BottomSquareThumb extends BottomSquareBase<Integer> {
 
         final BottomSquareThumb that = (BottomSquareThumb) o;
 
-        return mResource == that.mResource;
+        return mResource.equals(that.mResource);
     }
 
     @Override
     public int hashCode() {
-        return mResource;
+        return mResource.hashCode();
     }
 }

@@ -1,9 +1,18 @@
 package com.ng.vkchallenge2017.ui.view;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TabLayout;
+import android.support.v7.graphics.Palette;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -28,6 +37,8 @@ public class CustomImageView extends ConstraintLayout {
     ImageView mImageViewMid;
     @BindView(R.id.image_view_bot)
     ImageView mImageViewBot;
+
+    private int textColour;
 
     private LayoutInflater mInflater;
     private PostPresenter.Mode mMode = PostPresenter.Mode.POST;
@@ -122,4 +133,36 @@ public class CustomImageView extends ConstraintLayout {
     public void setSimpleGradient(final GradientDrawable simpleGradient) {
         mImageViewMid.setBackground(simpleGradient);
     }
+
+    public void setPng(final Integer pngResId) {
+        mImageViewMid.setImageResource(pngResId);
+    }
+
+    //todo make async!
+    public int calculateTextColour() {
+//        mImageViewMid.setDrawingCacheEnabled(true);
+//        mImageViewMid.buildDrawingCache(true);
+//        Bitmap midBitMap = Bitmap.createBitmap(mImageViewMid.getDrawingCache());
+//        mImageViewMid.setDrawingCacheEnabled(false);
+
+        Bitmap midBitMap;
+        if (mImageViewMid.getDrawable() instanceof BitmapDrawable) {
+            midBitMap = ((BitmapDrawable) mImageViewMid.getDrawable()).getBitmap();
+        } else {
+            ColorDrawable d = (ColorDrawable) mImageViewMid.getDrawable();
+            midBitMap = Bitmap.createBitmap(mImageViewMid.getWidth(), mImageViewMid.getHeight(), Bitmap.Config.RGB_565);
+            Canvas canvas = new Canvas(midBitMap);
+            mImageViewMid.draw(canvas);
+        }
+
+        Palette p = new Palette.Builder(midBitMap).generate();
+
+        Palette.Swatch swatch = p.getVibrantSwatch();
+
+        if (swatch == null)
+            return 0;
+        else
+            return swatch.getTitleTextColor();
+    }
 }
+

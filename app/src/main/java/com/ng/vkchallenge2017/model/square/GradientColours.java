@@ -7,8 +7,8 @@ import android.support.annotation.NonNull;
  */
 
 public class GradientColours {
-    @NonNull private int startColour;
-    @NonNull private int endColour;
+    @NonNull private final int startColour;
+    @NonNull private final int endColour;
 
     public GradientColours(@NonNull final int startColour, @NonNull final int endColour) {
         this.startColour = startColour;

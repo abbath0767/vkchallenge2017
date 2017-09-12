@@ -2,6 +2,7 @@ package com.ng.vkchallenge2017.ui.activity;
 
 import android.app.Service;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.graphics.drawable.GradientDrawable;
@@ -21,6 +22,10 @@ import com.ng.vkchallenge2017.R;
 import com.ng.vkchallenge2017.Util.GradientDrawableFactory;
 import com.ng.vkchallenge2017.model.square.BottomSquareBase;
 import com.ng.vkchallenge2017.model.square.GradientColours;
+import com.ng.vkchallenge2017.model.square.SimpleThumb;
+import com.ng.vkchallenge2017.model.square.Thumb;
+import com.ng.vkchallenge2017.model.square.ThumbAsset;
+import com.ng.vkchallenge2017.model.square.Thumbs;
 import com.ng.vkchallenge2017.presentation.PostPresenter;
 import com.ng.vkchallenge2017.ui.view.BottomBar;
 import com.ng.vkchallenge2017.ui.view.BottomSquareRVAdapter;
@@ -52,11 +57,15 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     @BindView(R.id.post_bottom_bar)
     BottomBar mBottomBar;
 
+    private ColorStateList oldColors;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
         ButterKnife.bind(this);
+
+        saveDefaultTextColour();
 
         moveStripToTop();
         //todo
@@ -87,6 +96,10 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         });
     }
 
+    private void saveDefaultTextColour() {
+        oldColors = mPostEditText.getTextColors();
+    }
+
     private void setUpKeyListener() {
         KeyBoardListener.observeKeyBoard(this, new KeyBoardListener.KeyBoardMoveListener() {
             @Override
@@ -114,10 +127,12 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
 
     @Override
     public void setUpContent(final BottomSquareBase square) {
+        Timber.i("setUpContent. square: %s", square);
         clearImageView();
         switch (square.getType()) {
             case DEFAULT: {
-                mCustomImageView.clear();
+//                mCustomImageView.clear();
+                //clear view
                 break;
             }
             case COLOR: {
@@ -130,12 +145,28 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
                 break;
             }
             case THUMB: {
-//                mCustomImageView.setImageResource((int)square.getResource());
+                Thumb thumb = ((Thumbs)square.getResource()).getBigThumb();
+                if (thumb instanceof SimpleThumb) {
+                    mCustomImageView.setPng(((SimpleThumb) thumb).getResource());
+                } else if (thumb instanceof ThumbAsset) {
+//                    mCustomImageView.setAsset((ThumbAsset)thumb).getResource();
+                }
+
                 break;
             }
         }
 
         requestImageView();
+        calculateAverageColour();
+    }
+
+    private void calculateAverageColour() {
+        int color = mCustomImageView.calculateTextColour();
+        if (color == 0) {
+            mPostEditText.setTextColor(oldColors);
+        } else {
+            mPostEditText.setTextColor(mCustomImageView.calculateTextColour());
+        }
     }
 
     private void requestImageView() {

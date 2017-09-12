@@ -23,6 +23,8 @@ import com.ng.vkchallenge2017.R;
 import com.ng.vkchallenge2017.Util.GradientDrawableFactory;
 import com.ng.vkchallenge2017.model.square.BottomSquareBase;
 import com.ng.vkchallenge2017.model.square.GradientColours;
+import com.ng.vkchallenge2017.model.square.Thumb;
+import com.ng.vkchallenge2017.model.square.Thumbs;
 
 import java.util.Arrays;
 import java.util.List;
@@ -148,7 +150,7 @@ public class BottomSquareRVAdapter extends RecyclerView.Adapter<BottomSquareRVAd
                     break;
                 }
                 case THUMB: {
-                    mImageView.setImageResource((int) square.getResource());
+                    mImageView.setImageResource(((Thumbs) square.getResource()).getSmallThumb());
                     break;
                 }
                 case COLOR: {
