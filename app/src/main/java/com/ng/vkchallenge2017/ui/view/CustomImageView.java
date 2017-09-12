@@ -67,23 +67,23 @@ public class CustomImageView extends ConstraintLayout {
     @Override
     //todo 328 pixel MF
     protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
-        Timber.i("onMeasure. mode: %s", mMode);
+//        Timber.i("onMeasure. mode: %s", mMode);
 
         int overHeight = calculateRest();
         int overWidth = calculateWidth();
-        Timber.i("onMeasure. rest H: %d, rest W: %d, measure H: %d, measure W: %d", overHeight, overWidth, heightMeasureSpec, widthMeasureSpec);
+//        Timber.i("onMeasure. rest H: %d, rest W: %d, measure H: %d, measure W: %d", overHeight, overWidth, heightMeasureSpec, widthMeasureSpec);
 
         if (mMode == PostPresenter.Mode.POST) {
             super.onMeasure(widthMeasureSpec, widthMeasureSpec);
             ViewGroup.LayoutParams p = getLayoutParams();
             if (overWidth >= overHeight) {
-                Timber.i("onMeasure. setDimen: %d x %d", overWidth, overHeight);
+//                Timber.i("onMeasure. setDimen: %d x %d", overWidth, overHeight);
                 setMeasuredDimension(overWidth, overHeight);
                 p.width = overWidth;
                 p.height = overHeight;
                 setLayoutParams(p);
             } else {
-                Timber.i("onMeasure, setDimen: %d x %d", getMeasuredWidth(), getMeasuredHeight());
+//                Timber.i("onMeasure, setDimen: %d x %d", getMeasuredWidth(), getMeasuredHeight());
                 setMeasuredDimension(getMeasuredWidth(), getMeasuredHeight());
                 p.width = overWidth;
                 p.height = overHeight;

@@ -9,6 +9,7 @@ import android.inputmethodservice.Keyboard;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.ContentFrameLayout;
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -18,14 +19,13 @@ import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.ng.vkchallenge2017.R;
 import com.ng.vkchallenge2017.Util.GradientDrawableFactory;
-import com.ng.vkchallenge2017.Util.KeyBoardListener;
-import com.ng.vkchallenge2017.Util.KeyBoardListenerSupport;
 import com.ng.vkchallenge2017.model.square.BottomSquareBase;
 import com.ng.vkchallenge2017.model.square.GradientColours;
 import com.ng.vkchallenge2017.presentation.PostPresenter;
 import com.ng.vkchallenge2017.ui.view.BottomBar;
 import com.ng.vkchallenge2017.ui.view.BottomSquareRVAdapter;
 import com.ng.vkchallenge2017.ui.view.CustomImageView;
+import com.ng.vkchallenge2017.ui.view.KeyBoardListener;
 import com.ng.vkchallenge2017.view.PostView;
 
 import java.util.List;
@@ -88,34 +88,12 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     }
 
     private void setUpKeyListener() {
-//        final ContentFrameLayout mRootView = findViewById(android.R.id.content);
-//        mRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-//            @Override
-//            public void onGlobalLayout() {
-//                Rect measureRect = new Rect(); //you should cache this, onGlobalLayout can get called often
-//                mRootView.getWindowVisibleDisplayFrame(measureRect);
-//                // measureRect.bottom is the position above soft keypad
-//                int keypadHeight = mRootView.getRootView().getHeight() - measureRect.bottom;
-//
-//                Timber.i("onGlobalLayout  %d", keypadHeight);
-//                if (keypadHeight > 0) {
-//                    // keyboard is opened
-//                    Timber.i("onGlobalLayout, OPEN");
-//                } else {
-//                    //store keyboard state to use in onBackPress if you need to
-//                    Timber.i("onGlobalLayout, CLOSE");
-//                }
-//            }
-//        });
-
-
-//        KeyBoardListenerSupport.setKeyBoardListener(this, new KeyBoardListener() {
-//            @Override
-//            public void keyBoardStateChange(final boolean visibility) {
-//                Timber.i("keyBoardStateChange %s", visibility ? "OPEN" : "CLOSE");
-//                requestImageView();
-//            }
-//        });
+        KeyBoardListener.observeKeyBoard(this, new KeyBoardListener.KeyBoardMoveListener() {
+            @Override
+            public void isShown(final boolean isShowing) {
+                requestImageView();
+            }
+        });
     }
 
     private void moveStripToTop() {
@@ -127,7 +105,6 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     }
 
     private void disableClickAnimation() {
-
     }
 
     @Override
