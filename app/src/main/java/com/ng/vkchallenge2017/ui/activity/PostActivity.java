@@ -118,12 +118,9 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
 
     @Override
     public void setUpContent(final BottomSquareBase square) {
-        Timber.i("setUpContent. square: %s", square);
-        clearImageView();
         switch (square.getType()) {
             case DEFAULT: {
-//                mCustomImageView.clear();
-                //clear view
+                mCustomImageView.setPng((int)square.getResource());
                 break;
             }
             case COLOR: {
@@ -153,10 +150,6 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     private void requestImageView() {
         mCustomImageView.requestLayout();
         mCustomImageView.calculateAverageColour();
-    }
-
-    private void clearImageView() {
-        mCustomImageView.clear();
     }
 
     @Override

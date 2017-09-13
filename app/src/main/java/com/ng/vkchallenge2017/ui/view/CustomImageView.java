@@ -28,6 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
@@ -91,18 +92,6 @@ public class CustomImageView extends ConstraintLayout {
         saveDefaultTextColour();
     }
 
-    public void clear() {
-//        mImageViewTop.setImageResource(android.R.color.transparent);
-//        mImageViewTop.setBackgroundResource(android.R.color.transparent);
-        mImageViewTop.setImageDrawable(null);
-//        mImageViewMid.setImageResource(android.R.color.transparent);
-//        mImageViewMid.setBackgroundResource(android.R.color.transparent);
-        mImageViewMid.setImageDrawable(null);
-//        mImageViewBot.setImageResource(android.R.color.transparent);
-//        mImageViewBot.setBackgroundResource(android.R.color.transparent);
-        mImageViewBot.setImageDrawable(null);
-    }
-
     @Override
     protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
         int rest = calculateRest();
@@ -160,14 +149,22 @@ public class CustomImageView extends ConstraintLayout {
     }
 
     public void setSimpleGradient(final GradientDrawable simpleGradient) {
-        mImageViewMid.setBackground(simpleGradient);
+        Glide.clear(mImageViewTop);
+        Glide.with(mContext)
+                .load("")
+                .asBitmap()
+                .placeholder(simpleGradient)
+                .into(mImageViewMid);
+        Glide.clear(mImageViewBot);
     }
 
     public void setPng(final Integer pngResId) {
+        Glide.clear(mImageViewTop);
         Glide.with(mContext)
                 .load(pngResId)
                 .asBitmap()
                 .into(mImageViewMid);
+        Glide.clear(mImageViewBot);
     }
 
     public void setAsset(final List<Integer> asset) {
@@ -186,35 +183,7 @@ public class CustomImageView extends ConstraintLayout {
                 .into(mImageViewBot);
     }
 
-
-    //todo make async!
     private int calculateTextColour() {
-
-//        Bitmap midBitMap = null;
-//        try {
-//            Timber.i("calculateTextColour. %s", mImageViewMid.getDrawable());
-//            if (mImageViewMid.getDrawable() instanceof BitmapDrawable) {
-//                midBitMap = ((BitmapDrawable) mImageViewMid.getDrawable()).getBitmap();
-//            } else {
-//                Timber.i("calculateTextColour. %d", getHeight());
-//                if (getWidth() == 0)
-//                    return 0;
-//                midBitMap = Bitmap.createBitmap(getWidth()/10, getHeight()/10, Bitmap.Config.RGB_565);
-//                Canvas canvas = new Canvas(midBitMap);
-//                mImageViewMid.draw(canvas);
-//            }
-//
-//            Palette p = new Palette.Builder(midBitMap).generate();
-//
-//            Palette.Swatch swatch = p.getVibrantSwatch();
-//
-//            if (swatch == null)
-//                return 0;
-//            else
-//                return swatch.getTitleTextColor();
-//        } finally {
-//            midBitMap = null;
-//        }
 
         return 0;
     }
