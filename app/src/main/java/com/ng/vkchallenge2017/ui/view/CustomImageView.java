@@ -103,25 +103,25 @@ public class CustomImageView extends ConstraintLayout {
     protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
         int rest = calculateRest();
 //        int overWidth = getMeasuredWidth();
-        Timber.i("onMeasure specs W: %d, H: %d", widthMeasureSpec, heightMeasureSpec);
-        Timber.i("onMeasure get() W: %d, H: %d", getMeasuredWidth(), getMeasuredHeight());
-        Timber.i("onMeasure getSpec() W: %d, H: %d", MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.getSize(heightMeasureSpec));
+//        Timber.i("onMeasure specs W: %d, H: %d", widthMeasureSpec, heightMeasureSpec);
+//        Timber.i("onMeasure get() W: %d, H: %d", getMeasuredWidth(), getMeasuredHeight());
+//        Timber.i("onMeasure getSpec() W: %d, H: %d", MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.getSize(heightMeasureSpec));
         int exceptedHeight = MeasureSpec.getSize(widthMeasureSpec);
         int realHeight = MeasureSpec.getSize(heightMeasureSpec);
 
-        Timber.i("onMeasure. excepted: %d, real: %d", exceptedHeight, realHeight);
+//        Timber.i("onMeasure. excepted: %d, real: %d", exceptedHeight, realHeight);
         if (mMode == PostPresenter.Mode.POST) {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
             if (realHeight > exceptedHeight) {
-                Timber.i("onMeasure. need SQUARABLE");
+//                Timber.i("onMeasure. need SQUARABLE");
                 super.onMeasure(widthMeasureSpec, widthMeasureSpec);
             } else {
-                Timber.i("onMeasure.DONT NEED");
-                Timber.i("onMeasure rest: %d", rest);
+//                Timber.i("onMeasure.DONT NEED");
+//                Timber.i("onMeasure rest: %d", rest);
 
                 int spec = MeasureSpec.makeMeasureSpec(rest, MeasureSpec.EXACTLY);
-                Timber.i("onMeasure. restSpex: %d", spec);
+//                Timber.i("onMeasure. restSpex: %d", spec);
                 setMeasuredDimension(exceptedHeight, rest);
                 super.onMeasure(widthMeasureSpec, spec);
             }
@@ -133,18 +133,18 @@ public class CustomImageView extends ConstraintLayout {
     private int calculateRest() {
         int overHeight = 0;
         overHeight += ((ConstraintLayout) getParent()).getHeight();
-        Timber.i("calculateRest all H: %d", overHeight);
+//        Timber.i("calculateRest all H: %d", overHeight);
         for (int i = 0; i < ((ConstraintLayout) getParent()).getChildCount(); i++) {
-            Timber.i("calculateRest: %s", ((ConstraintLayout) getParent()).getChildAt(i));
+//            Timber.i("calculateRest: %s", ((ConstraintLayout) getParent()).getChildAt(i));
             int minusHeight = 0;
             if (((ConstraintLayout) getParent()).getChildAt(i) instanceof TabLayout) {
                 minusHeight = (((ConstraintLayout) getParent()).getChildAt(i)).getHeight();
                 overHeight -= minusHeight;
-                Timber.i("calculateRest minus Tab: %d", overHeight);
+//                Timber.i("calculateRest minus Tab: %d", overHeight);
             } else if (((ConstraintLayout) getParent()).getChildAt(i) instanceof BottomBar) {
                 minusHeight = ((ConstraintLayout) getParent()).getChildAt(i).getHeight();
                 overHeight -= minusHeight;
-                Timber.i("calculateRest minus Bot: %d", overHeight);
+//                Timber.i("calculateRest minus Bot: %d", overHeight);
             }
         }
 
@@ -162,6 +162,14 @@ public class CustomImageView extends ConstraintLayout {
     public void setPng(final Integer pngResId) {
 //        mImageViewMid.setImageResource(pngResId);
         mImageViewMid.setImageBitmap(decodeSampledBitmapFromResource(mContext.getResources(), pngResId, getWidth(), getHeight()));
+    }
+
+    public void setAsset(final List<Integer> asset) {
+        mImageViewTop.setImageResource(asset.get(0));
+        mImageViewMid.setImageResource(asset.get(1));
+        mImageViewBot.setImageResource(asset.get(2));
+
+        Timber.i("setAsset");
     }
 
     public Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
@@ -201,12 +209,6 @@ public class CustomImageView extends ConstraintLayout {
         }
 
         return inSampleSize;
-    }
-
-    public void setAsset(final List<Integer> asset) {
-        mImageViewTop.setImageResource(asset.get(0));
-        mImageViewMid.setImageResource(asset.get(1));
-        mImageViewBot.setImageResource(asset.get(2));
     }
 
     //todo make async!
