@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewCompat;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -146,6 +147,8 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         for (int i = 0; i < tabCount; i++) {
             ((((LinearLayout) ((LinearLayout) mTabLayout.getChildAt(0)).getChildAt(i)).getChildAt(1))).setScaleY(-1);
         }
+
+        mTabLayout.requestLayout();
     }
 
     private void disableClickAnimation() {
@@ -270,9 +273,7 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
             keyboardHeight = height;
 
             ConstraintSet set = new ConstraintSet();
-            set.clone(mParentLayout);
             set.constrainHeight(cover.getId(), keyboardHeight);
-            set.constrainMinHeight(cover.getId(), keyboardHeight);
             set.constrainWidth(cover.getId(), 0);
             set.connect(cover.getId(), ConstraintSet.BOTTOM, mParentLayout.getId(), ConstraintSet.BOTTOM);
             set.connect(cover.getId(), ConstraintSet.LEFT, mParentLayout.getId(), ConstraintSet.LEFT);
