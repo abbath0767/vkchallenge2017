@@ -6,6 +6,7 @@ import com.ng.vkchallenge2017.R;
 import com.ng.vkchallenge2017.model.square.BottomSquareBase;
 import com.ng.vkchallenge2017.model.square.BottomSquareColourGradient;
 import com.ng.vkchallenge2017.model.square.BottomSquareDefault;
+import com.ng.vkchallenge2017.repo.PhotoRepository;
 import com.ng.vkchallenge2017.repo.SquareRepository;
 import com.ng.vkchallenge2017.repo.SquareRepositoryImpl;
 import com.ng.vkchallenge2017.view.PostView;
@@ -26,16 +27,19 @@ import static com.ng.vkchallenge2017.presentation.PostPresenter.Mode.POST;
 public class PostPresenter extends MvpPresenter<PostView> {
 
     private SquareRepository mSquareRepository;
+    private PhotoRepository mPhotoRepository;
     private Mode mMode = POST;
 
-    public PostPresenter() {
+    public PostPresenter(PhotoRepository photoRepository) {
         mSquareRepository = SquareRepositoryImpl.getInstance();
+        mPhotoRepository = photoRepository;
     }
 
     @Override
     protected void onFirstViewAttach() {
         super.onFirstViewAttach();
         getViewState().setBottomBarRecycler(mSquareRepository.getSquares());
+        getViewState().setAdapterData(mPhotoRepository.getPhotoSquares());
     }
 
     public void onSquareClick(final int position) {

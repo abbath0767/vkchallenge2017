@@ -1,17 +1,9 @@
-package com.ng.vkchallenge2017.ui.view;
+package com.ng.vkchallenge2017.ui.adapter;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -23,10 +15,8 @@ import com.ng.vkchallenge2017.R;
 import com.ng.vkchallenge2017.Util.GradientDrawableFactory;
 import com.ng.vkchallenge2017.model.square.BottomSquareBase;
 import com.ng.vkchallenge2017.model.square.GradientColours;
-import com.ng.vkchallenge2017.model.square.Thumb;
 import com.ng.vkchallenge2017.model.square.Thumbs;
 
-import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -48,7 +38,7 @@ public class BottomSquareRVAdapter extends RecyclerView.Adapter<BottomSquareRVAd
     private SquareClickListener mSquareClickListener;
     private int selectedItem = 0;
 
-    BottomSquareRVAdapter(@NonNull final Context context) {
+    public BottomSquareRVAdapter(@NonNull final Context context) {
         mContext = context;
     }
 

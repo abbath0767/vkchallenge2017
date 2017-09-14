@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 public abstract class BottomSquareBase<T> {
 
     @NonNull private BottomSquareType type;
-    @NonNull private boolean isChecked = false;
 
     public BottomSquareBase(@NonNull final BottomSquareType type) {
         this.type = type;
@@ -19,18 +18,27 @@ public abstract class BottomSquareBase<T> {
         return type;
     }
 
-    @NonNull
-    public boolean isChecked() {
-        return isChecked;
-    }
-
     public abstract T getResource();
 
     @Override
     public String toString() {
         return "BottomSquareBase{" +
                 "type=" + type +
-                ", isChecked=" + isChecked +
                 '}';
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final BottomSquareBase<?> that = (BottomSquareBase<?>) o;
+
+        return type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return type.hashCode();
     }
 }

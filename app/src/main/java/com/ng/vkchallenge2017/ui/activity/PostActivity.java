@@ -2,12 +2,14 @@ package com.ng.vkchallenge2017.ui.activity;
 
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.OrientationHelper;
+import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,8 +21,10 @@ import android.widget.PopupWindow;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.ng.vkchallenge2017.R;
 import com.ng.vkchallenge2017.Util.GradientDrawableFactory;
+import com.ng.vkchallenge2017.model.photo.PhotoSquareBase;
 import com.ng.vkchallenge2017.model.square.BottomSquareBase;
 import com.ng.vkchallenge2017.model.square.GradientColours;
 import com.ng.vkchallenge2017.model.square.SimpleThumb;
@@ -28,13 +32,14 @@ import com.ng.vkchallenge2017.model.square.Thumb;
 import com.ng.vkchallenge2017.model.square.ThumbAsset;
 import com.ng.vkchallenge2017.model.square.Thumbs;
 import com.ng.vkchallenge2017.presentation.PostPresenter;
+import com.ng.vkchallenge2017.repo.PhotoRepositoryImpl;
+import com.ng.vkchallenge2017.ui.adapter.PopupSquareAdapter;
 import com.ng.vkchallenge2017.ui.view.BottomBar;
-import com.ng.vkchallenge2017.ui.view.BottomSquareRVAdapter;
+import com.ng.vkchallenge2017.ui.adapter.BottomSquareRVAdapter;
 import com.ng.vkchallenge2017.ui.view.CustomImageView;
 import com.ng.vkchallenge2017.ui.view.KeyBoardListener;
 import com.ng.vkchallenge2017.view.PostView;
 
-import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -51,6 +56,11 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     @InjectPresenter
     PostPresenter mPostPresenter;
 
+    @ProvidePresenter
+    public PostPresenter providePresenter() {
+        return new PostPresenter(new PhotoRepositoryImpl(this));
+    }
+
     @BindView(R.id.post_toolbar_left_button)
     ImageButton mImageButtonLeft;
     @BindView(R.id.post_container)
@@ -61,16 +71,17 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     CustomImageView mCustomImageView;
     @BindView(R.id.post_bottom_bar)
     BottomBar mBottomBar;
-
     @BindView(R.id.cover_for_popup)
     ConstraintLayout cover;
-
 
     private InputMethodManager mInputMethodManager;
     private View popupView;
     private PopupWindow mPopupWindow;
     private int keyboardHeight;
     private boolean isKeyBoardVisible;
+
+    private RecyclerView mPhotoRecyclerView;
+    private PopupSquareAdapter mPopupSquareAdapter;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -146,6 +157,7 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         int tabCount = ((LinearLayout) mTabLayout.getChildAt(0)).getChildCount();
         for (int i = 0; i < tabCount; i++) {
             ((((LinearLayout) ((LinearLayout) mTabLayout.getChildAt(0)).getChildAt(i)).getChildAt(1))).setScaleY(-1);
+            ((AppCompatTextView) ((((LinearLayout) ((LinearLayout) mTabLayout.getChildAt(0)).getChildAt(i)).getChildAt(1)))).setTextSize( 14f);
         }
 
         mTabLayout.requestLayout();
@@ -255,6 +267,8 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     }
 
     private void enablePopup() {
+        initRecyclerView();
+
         mPopupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT,
                 (int) keyboardHeight, false);
 
@@ -266,6 +280,29 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
                 cover.setVisibility(LinearLayout.GONE);
             }
         });
+    }
+
+    @Override
+    public void setAdapterData(final List<PhotoSquareBase> squares) {
+        Timber.i("setAdapterData size: %d", squares.size());
+        mPopupSquareAdapter.setSquares(squares);
+        mPopupSquareAdapter.notifyDataSetChanged();
+        mPopupSquareAdapter.setSquareClickListener(new PopupSquareAdapter.SquareClickListener() {
+            @Override
+            public void onSquareClick(final int position) {
+                Timber.i("onSquareClick %d", position);
+            }
+        });
+    }
+
+    private void initRecyclerView() {
+        Timber.i("initRecyclerView");
+        mPhotoRecyclerView =  popupView.findViewById(R.id.popup_photo_recycler);
+
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 2, OrientationHelper.HORIZONTAL, false);
+        mPhotoRecyclerView.setLayoutManager(layoutManager);
+        mPopupSquareAdapter = new PopupSquareAdapter(this);
+        mPhotoRecyclerView.setAdapter(mPopupSquareAdapter);
     }
 
     private void changeKeyboardHeight(final int height) {

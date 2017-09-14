@@ -7,17 +7,16 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.Button;
 
 import com.ng.vkchallenge2017.R;
 import com.ng.vkchallenge2017.model.square.BottomSquareBase;
+import com.ng.vkchallenge2017.ui.adapter.BottomSquareRVAdapter;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
 /**
  * Created by nikitagusarov on 06.09.17.
