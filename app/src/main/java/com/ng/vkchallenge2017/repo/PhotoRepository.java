@@ -10,4 +10,6 @@ import java.util.List;
 
 public interface PhotoRepository {
     List<PhotoSquareBase> getPhotoSquares();
+    void addPhotos(List<PhotoSquareBase> list);
+    void loadPhotoFromGallery();
 }

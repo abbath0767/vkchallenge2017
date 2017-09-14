@@ -222,6 +222,7 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
 
     @Override
     public void setUpPopup() {
+        //checkPermission
         forceShowKeyboardIfNeed();
         if (!mPopupWindow.isShowing()) {
 
@@ -320,5 +321,12 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
 
             mParentLayout.requestLayout();
         }
+    }
+
+    @Override
+    public void checkPermission() {
+        Timber.i("checkPermission");
+        if (true)
+            mPostPresenter.loadPhoto();
     }
 }

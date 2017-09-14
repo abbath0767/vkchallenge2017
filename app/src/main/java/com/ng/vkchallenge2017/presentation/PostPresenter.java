@@ -18,6 +18,7 @@ import timber.log.Timber;
 
 import static com.ng.vkchallenge2017.presentation.PostPresenter.Mode.HISTORY;
 import static com.ng.vkchallenge2017.presentation.PostPresenter.Mode.POST;
+import static com.ng.vkchallenge2017.repo.PhotoRepositoryImpl.MAX_SQUARE_COUNT;
 
 /**
  * Created by nikitagusarov on 06.09.17.
@@ -29,6 +30,7 @@ public class PostPresenter extends MvpPresenter<PostView> {
     private SquareRepository mSquareRepository;
     private PhotoRepository mPhotoRepository;
     private Mode mMode = POST;
+    private boolean loaded = false;
 
     public PostPresenter(PhotoRepository photoRepository) {
         mSquareRepository = SquareRepositoryImpl.getInstance();
@@ -49,6 +51,8 @@ public class PostPresenter extends MvpPresenter<PostView> {
             getViewState().setUpContent(mSquareRepository.getSquares().get(position));
         } else {
             getViewState().setUpPopup();
+            if (!loaded)
+                getViewState().checkPermission();
         }
     }
 
@@ -61,6 +65,15 @@ public class PostPresenter extends MvpPresenter<PostView> {
         }
 
         getViewState().setUpMode(mMode);
+    }
+
+    public void loadPhoto() {
+        Timber.i("loadPhoto");
+        if (mPhotoRepository.getPhotoSquares().size() != MAX_SQUARE_COUNT || !loaded) {
+            Timber.i("loadPhoto need load");
+            mPhotoRepository.loadPhotoFromGallery();
+            loaded = true;
+        }
     }
 
     public enum Mode {
