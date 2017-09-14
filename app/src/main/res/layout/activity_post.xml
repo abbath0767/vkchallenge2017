@@ -13,6 +13,7 @@
         android:layout_marginLeft="@dimen/tab_layout_horizontal_margin"
         android:layout_marginRight="@dimen/tab_layout_horizontal_margin"
         android:scaleY="-1"
+        android:elevation="2dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -69,6 +70,15 @@
         app:layout_constraintTop_toBottomOf="@id/post_devider_top"
         />
 
+    <com.ng.vkchallenge2017.ui.view.BottomBar
+        android:id="@+id/post_bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/bottom_bar_height"
+        app:layout_constraintBottom_toTopOf="@id/cover_for_popup"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        />
+
     <android.support.constraint.ConstraintLayout
         android:id="@+id/cover_for_popup"
         android:layout_width="match_parent"
@@ -78,14 +88,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
-
-    <com.ng.vkchallenge2017.ui.view.BottomBar
-        android:id="@+id/post_bottom_bar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/bottom_bar_height"
-        app:layout_constraintBottom_toTopOf="@id/cover_for_popup"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        />
 
 </android.support.constraint.ConstraintLayout>

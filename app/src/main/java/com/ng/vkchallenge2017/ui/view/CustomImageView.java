@@ -134,21 +134,21 @@ public class CustomImageView extends ConstraintLayout {
         overHeight += ((ConstraintLayout) getParent()).getHeight();
 //        Timber.i("calculateRest all H: %d", overHeight);
         for (int i = 0; i < ((ConstraintLayout) getParent()).getChildCount(); i++) {
-            Timber.i("calculateRest: %s", ((ConstraintLayout) getParent()).getChildAt(i));
+//            Timber.i("calculateRest: %s", ((ConstraintLayout) getParent()).getChildAt(i));
             int minusHeight = 0;
             if (((ConstraintLayout) getParent()).getChildAt(i) instanceof TabLayout) {
                 minusHeight = (((ConstraintLayout) getParent()).getChildAt(i)).getHeight();
                 overHeight -= minusHeight;
-                Timber.i("calculateRest minus Tab: %d, over: %d", minusHeight, overHeight);
+//                Timber.i("calculateRest minus Tab: %d, over: %d", minusHeight, overHeight);
             } else if (((ConstraintLayout) getParent()).getChildAt(i) instanceof BottomBar) {
                 minusHeight = ((ConstraintLayout) getParent()).getChildAt(i).getHeight();
                 overHeight -= minusHeight;
-                Timber.i("calculateRest minus Bot: %d, over: %d", minusHeight, overHeight);
+//                Timber.i("calculateRest minus Bot: %d, over: %d", minusHeight, overHeight);
             } else if (mContext.getResources().getResourceEntryName(((ConstraintLayout) getParent()).getChildAt(i).getId()).equals(mContext.getResources().getString(R.string.cover_res_name))
                     && ((ConstraintLayout) getParent()).getChildAt(i).getVisibility() == View.VISIBLE) {
                 minusHeight = ((ConstraintLayout) getParent()).getChildAt(i).getHeight();
                 overHeight -= minusHeight;
-                Timber.i("calculateRest minus cover: %d, over: %d", minusHeight, overHeight);
+//                Timber.i("calculateRest minus cover: %d, over: %d", minusHeight, overHeight);
             }
         }
 

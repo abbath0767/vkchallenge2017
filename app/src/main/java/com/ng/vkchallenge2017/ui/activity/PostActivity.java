@@ -2,6 +2,7 @@ package com.ng.vkchallenge2017.ui.activity;
 
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
@@ -11,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
@@ -31,6 +33,7 @@ import com.ng.vkchallenge2017.ui.view.CustomImageView;
 import com.ng.vkchallenge2017.ui.view.KeyBoardListener;
 import com.ng.vkchallenge2017.view.PostView;
 
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -47,6 +50,8 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     @InjectPresenter
     PostPresenter mPostPresenter;
 
+    @BindView(R.id.post_toolbar_left_button)
+    ImageButton mImageButtonLeft;
     @BindView(R.id.post_container)
     ConstraintLayout mParentLayout;
     @BindView(R.id.post_tab_layout)
@@ -58,12 +63,11 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
 
     @BindView(R.id.cover_for_popup)
     ConstraintLayout cover;
-//    ConstraintLayout cover;
+
 
     private InputMethodManager mInputMethodManager;
-
-    View popupView;
-    PopupWindow mPopupWindow;
+    private View popupView;
+    private PopupWindow mPopupWindow;
     private int keyboardHeight;
     private boolean isKeyBoardVisible;
 
@@ -72,7 +76,6 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
         ButterKnife.bind(this);
-        initInputManager();
 
         moveStripToTop();
         //todo
@@ -112,6 +115,8 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
                 return false;
             }
         });
+
+        initInputManager();
     }
 
     private void initInputManager() {
@@ -124,12 +129,10 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         KeyBoardListener.observeKeyBoard(mParentLayout, mPopupWindow, new KeyBoardListener.KeyBoardMoveListener() {
             @Override
             public void isShown(final boolean isShowing, final int heightDifference) {
-                Timber.i("isShown %b, oldValue: %d, keyHeightt: %d", isShowing, heightDifference, keyboardHeight);
 
                 isKeyBoardVisible = isShowing;
 
                 if (heightDifference != oldValue) {
-                    Timber.i("isShown %b new %d old %d", isShowing, heightDifference, oldValue);
                     oldValue = heightDifference;
                     changeKeyboardHeight(heightDifference);
                     requestImageView();
@@ -141,7 +144,6 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     private void moveStripToTop() {
         int tabCount = ((LinearLayout) mTabLayout.getChildAt(0)).getChildCount();
         for (int i = 0; i < tabCount; i++) {
-            //get reverted tab and revert only textview
             ((((LinearLayout) ((LinearLayout) mTabLayout.getChildAt(0)).getChildAt(i)).getChildAt(1))).setScaleY(-1);
         }
     }
@@ -206,8 +208,6 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     @Override
     public void setUpPopup() {
         forceShowKeyboardIfNeed();
-        Timber.i("setUpPopup. NEED SHOW POP UP, keyboard: %b, H: %d", isKeyBoardVisible, keyboardHeight);
-
         if (!mPopupWindow.isShowing()) {
 
             mPopupWindow.setHeight((keyboardHeight));
@@ -226,7 +226,6 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
             cover.invalidate();
             mParentLayout.requestLayout();
 
-            Timber.i("setUpPopup %b H:%d W:%d", cover.getVisibility() == View.VISIBLE, cover.getHeight(), cover.getWidth());
             mPopupWindow.showAtLocation(mParentLayout, Gravity.BOTTOM, 0, 0);
 
         } else {
@@ -245,7 +244,6 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     }
 
     private void inflatePopup() {
-        Timber.i("inflatePopup");
         popupView = getLayoutInflater().inflate(R.layout.popup_photos, null);
 
         final float popUpheight = getResources().getDimension(
@@ -268,7 +266,6 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     }
 
     private void changeKeyboardHeight(final int height) {
-        Timber.i("changeKeyboardHeight. %d", height);
         if (height > 100) {
             keyboardHeight = height;
 
@@ -284,8 +281,6 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
             set.applyTo(mParentLayout);
 
             mParentLayout.requestLayout();
-
-            Timber.i("changeKeyboardHeight %b W:%d, H:%d", cover.getVisibility() == View.VISIBLE, cover.getWidth(), cover.getHeight());
         }
     }
 }
