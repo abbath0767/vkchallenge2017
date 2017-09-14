@@ -12,4 +12,5 @@
     <string name="tab_history">История</string>
     <string name="post_et_hint">Что у Вас нового?</string>
     <string name="action_sent">Отправить</string>
+    <string name="cover_res_name">cover_for_popup</string>
 </resources>

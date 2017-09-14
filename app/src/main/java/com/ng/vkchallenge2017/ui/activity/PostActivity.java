@@ -37,7 +37,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-import static android.view.View.MeasureSpec.EXACTLY;
 
 /**
  * Created by nikitagusarov on 06.09.17.
@@ -59,6 +58,7 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
 
     @BindView(R.id.cover_for_popup)
     ConstraintLayout cover;
+//    ConstraintLayout cover;
 
     private InputMethodManager mInputMethodManager;
 
@@ -189,6 +189,8 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
 
                 break;
             }
+            case ACTION:
+                return;
         }
 
         requestImageView();
@@ -211,10 +213,20 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
             mPopupWindow.setHeight((keyboardHeight));
 
             if (isKeyBoardVisible) {
-                cover.setVisibility(LinearLayout.GONE);
+                ConstraintSet set = new ConstraintSet();
+                set.clone(mParentLayout);
+                set.setVisibility(cover.getId(), ConstraintSet.GONE);
+                set.applyTo(mParentLayout);
             } else {
-                cover.setVisibility(LinearLayout.VISIBLE);
+                ConstraintSet set = new ConstraintSet();
+                set.clone(mParentLayout);
+                set.setVisibility(cover.getId(), ConstraintSet.VISIBLE);
+                set.applyTo(mParentLayout);
             }
+            cover.invalidate();
+            mParentLayout.requestLayout();
+
+            Timber.i("setUpPopup %b H:%d W:%d", cover.getVisibility() == View.VISIBLE, cover.getHeight(), cover.getWidth());
             mPopupWindow.showAtLocation(mParentLayout, Gravity.BOTTOM, 0, 0);
 
         } else {
@@ -259,14 +271,21 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         Timber.i("changeKeyboardHeight. %d", height);
         if (height > 100) {
             keyboardHeight = height;
+
             ConstraintSet set = new ConstraintSet();
-            set.clone(cover);
-            set.constrainWidth(cover.getId(), mParentLayout.getWidth());
+            set.clone(mParentLayout);
             set.constrainHeight(cover.getId(), keyboardHeight);
-//            set.connect(cover.getId(), ConstraintSet.BOTTOM, mParentLayout.getId(), ConstraintSet.BOTTOM);
-//            set.connect(cover.getId(), ConstraintSet.LEFT, mParentLayout.getId(), ConstraintSet.LEFT);
-//            set.connect(cover.getId(), ConstraintSet.RIGHT, mParentLayout.getId(), ConstraintSet.RIGHT);
-            set.applyTo(cover);
+            set.constrainMinHeight(cover.getId(), keyboardHeight);
+            set.constrainWidth(cover.getId(), 0);
+            set.connect(cover.getId(), ConstraintSet.BOTTOM, mParentLayout.getId(), ConstraintSet.BOTTOM);
+            set.connect(cover.getId(), ConstraintSet.LEFT, mParentLayout.getId(), ConstraintSet.LEFT);
+            set.connect(cover.getId(), ConstraintSet.RIGHT, mParentLayout.getId(), ConstraintSet.RIGHT);
+            set.setVisibility(cover.getId(), ConstraintSet.GONE);
+            set.applyTo(mParentLayout);
+
+            mParentLayout.requestLayout();
+
+            Timber.i("changeKeyboardHeight %b W:%d, H:%d", cover.getVisibility() == View.VISIBLE, cover.getWidth(), cover.getHeight());
         }
     }
 }
