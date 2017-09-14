@@ -28,6 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -90,6 +91,7 @@ public class CustomImageView extends ConstraintLayout {
         ButterKnife.bind(this);
 
         saveDefaultTextColour();
+
     }
 
     @Override
@@ -102,7 +104,7 @@ public class CustomImageView extends ConstraintLayout {
         int exceptedHeight = MeasureSpec.getSize(widthMeasureSpec);
         int realHeight = MeasureSpec.getSize(heightMeasureSpec);
 
-//        Timber.i("onMeasure. excepted: %d, real: %d", exceptedHeight, realHeight);
+//        Timber.i("onMeasure. excepted: %d, real: %d, rest: %d", exceptedHeight, realHeight, rest);
         if (mMode == PostPresenter.Mode.POST) {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
@@ -123,6 +125,10 @@ public class CustomImageView extends ConstraintLayout {
         }
     }
 
+    public void clearFocus() {
+        mPostEditText.clearFocus();
+    }
+
     private int calculateRest() {
         int overHeight = 0;
         overHeight += ((ConstraintLayout) getParent()).getHeight();
@@ -135,14 +141,14 @@ public class CustomImageView extends ConstraintLayout {
                 overHeight -= minusHeight;
 //                Timber.i("calculateRest minus Tab: %d, over: %d",minusHeight, overHeight);
             } else if (((ConstraintLayout) getParent()).getChildAt(i) instanceof BottomBar) {
-                BottomBar b = (BottomBar) ((ConstraintLayout) getParent()).getChildAt(i);
-//                Timber.i("calculateRest %b, %b", b.get);
                 minusHeight = ((ConstraintLayout) getParent()).getChildAt(i).getHeight();
                 overHeight -= minusHeight;
 //                Timber.i("calculateRest minus Bot: %d, over: %d", minusHeight, overHeight);
             }
-//            else if (((ConstraintLayout) getParent()).getChildAt(i) instanceof ConstraintLayout) {
-//            }
+            else if (((ConstraintLayout) getParent()).getChildAt(i) instanceof ConstraintLayout) {
+                minusHeight = ((ConstraintLayout) getParent()).getChildAt(i).getHeight();
+//                Timber.i("calculateRest layout H: %d", minusHeight);
+            }
         }
 
         return overHeight;
@@ -179,6 +185,8 @@ public class CustomImageView extends ConstraintLayout {
                 .into(mImageViewTop);
         Glide.with(mContext)
                 .load(asset.get(1))
+                .asBitmap()
+                .format(DecodeFormat.PREFER_ARGB_8888)
                 .into(mImageViewMid);
         Glide.with(mContext)
                 .load(asset.get(2))
@@ -202,6 +210,10 @@ public class CustomImageView extends ConstraintLayout {
 
     private void saveDefaultTextColour() {
         oldColors = mPostEditText.getTextColors();
+    }
+
+    public void setOnTextTouchListener(final OnTouchListener onTextTouchListener) {
+        mPostEditText.setOnTouchListener(onTextTouchListener);
     }
 }
 

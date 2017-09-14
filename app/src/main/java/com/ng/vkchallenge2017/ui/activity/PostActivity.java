@@ -7,6 +7,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.design.widget.TabLayout;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -35,6 +36,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
+
+import static android.view.View.MeasureSpec.EXACTLY;
 
 /**
  * Created by nikitagusarov on 06.09.17.
@@ -98,10 +101,17 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         });
 
         inflatePopup();
-
         enablePopup();
 
         setUpKeyListener();
+
+        mCustomImageView.setOnTextTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(final View view, final MotionEvent motionEvent) {
+                disablePopup();
+                return false;
+            }
+        });
     }
 
     private void initInputManager() {
@@ -114,7 +124,7 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         KeyBoardListener.observeKeyBoard(mParentLayout, mPopupWindow, new KeyBoardListener.KeyBoardMoveListener() {
             @Override
             public void isShown(final boolean isShowing, final int heightDifference) {
-                Timber.i("isShown %b, oldValue: %d", isShowing, heightDifference);
+                Timber.i("isShown %b, oldValue: %d, keyHeightt: %d", isShowing, heightDifference, keyboardHeight);
 
                 isKeyBoardVisible = isShowing;
 
@@ -204,7 +214,6 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
                 cover.setVisibility(LinearLayout.GONE);
             } else {
                 cover.setVisibility(LinearLayout.VISIBLE);
-                mCustomImageView.requestLayout();
             }
             mPopupWindow.showAtLocation(mParentLayout, Gravity.BOTTOM, 0, 0);
 
@@ -248,15 +257,15 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
 
     private void changeKeyboardHeight(final int height) {
         Timber.i("changeKeyboardHeight. %d", height);
-        if (height > 50) {
+        if (height > 100) {
             keyboardHeight = height;
             ConstraintSet set = new ConstraintSet();
             set.clone(cover);
-            set.constrainWidth(cover.getId(), 0);
+            set.constrainWidth(cover.getId(), mParentLayout.getWidth());
             set.constrainHeight(cover.getId(), keyboardHeight);
-            set.connect(cover.getId(), ConstraintSet.BOTTOM, mParentLayout.getId(), ConstraintSet.BOTTOM);
-            set.connect(cover.getId(), ConstraintSet.LEFT, mParentLayout.getId(), ConstraintSet.LEFT);
-            set.connect(cover.getId(), ConstraintSet.RIGHT, mParentLayout.getId(), ConstraintSet.RIGHT);
+//            set.connect(cover.getId(), ConstraintSet.BOTTOM, mParentLayout.getId(), ConstraintSet.BOTTOM);
+//            set.connect(cover.getId(), ConstraintSet.LEFT, mParentLayout.getId(), ConstraintSet.LEFT);
+//            set.connect(cover.getId(), ConstraintSet.RIGHT, mParentLayout.getId(), ConstraintSet.RIGHT);
             set.applyTo(cover);
         }
     }
