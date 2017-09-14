@@ -40,7 +40,12 @@ public class PostPresenter extends MvpPresenter<PostView> {
 
     public void onSquareClick(final int position) {
         Timber.i("onSquareClick, pos: %d", position);
-        getViewState().setUpContent(mSquareRepository.getSquares().get(position));
+        if (position != mSquareRepository.getSquares().size() - 1) {
+            getViewState().disablePopup();
+            getViewState().setUpContent(mSquareRepository.getSquares().get(position));
+        } else {
+            getViewState().setUpPopup();
+        }
     }
 
     public void tabSelected(final int position) {

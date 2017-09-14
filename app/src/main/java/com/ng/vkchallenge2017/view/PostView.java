@@ -20,4 +20,8 @@ public interface PostView extends MvpView {
     void setUpContent(BottomSquareBase squareBase);
 
     void setUpMode(PostPresenter.Mode mode);
+
+    void setUpPopup();
+
+    void disablePopup();
 }

@@ -29,7 +29,7 @@
         android:paddingRight="@dimen/button_padding_horizontal"
         android:paddingTop="@dimen/button_padding_top"
         android:text="@string/enter_from_vk"
-        android:textSize="16sp"
+        android:textSize="@dimen/enter_button_size"
         android:background="@drawable/main_btn_login"
         style="@style/LoginButtonStyle"
         app:layout_constraintBottom_toBottomOf="parent"

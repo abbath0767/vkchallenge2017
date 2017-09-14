@@ -41,7 +41,7 @@
         android:layout_marginLeft="@dimen/button_margin_action_send_horizontal"
         android:layout_marginRight="@dimen/button_margin_action_send_horizontal"
         android:layout_marginTop="@dimen/button_margin_action_send"
-        android:textSize="13sp"
+        android:textSize="@dimen/bottom_bar_post_button_text_size"
         android:background="@drawable/post_btn_sent_button"
         style="@style/LoginButtonStyle"
         app:layout_constraintTop_toTopOf="parent"

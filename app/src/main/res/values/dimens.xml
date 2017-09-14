@@ -8,6 +8,7 @@
     <dimen name="button_login_radius">4dp</dimen>
     <dimen name="main_activity_icon_logo_height">48dp</dimen>
     <dimen name="main_activity_icon_logo_width">82dp</dimen>
+    <dimen name="enter_button_size">16sp</dimen>
 
     <!--post activity-->
     <dimen name="toolbar_button_border_size">24dp</dimen>
@@ -23,10 +24,18 @@
     <dimen name="post_et_horizontal_margin">24dp</dimen>
     <dimen name="post_button_send_height">32dp</dimen>
     <dimen name="post_button_send_width">111dp</dimen>
+    <dimen name="tab_layout_horizontal_margin">92dp</dimen>
+    <dimen name="bottom_bar_post_button_text_size">13sp</dimen>
 
     <!--default-->
     <dimen name="button_default_padding">4dp</dimen>
     <dimen name="square_corner">4dp</dimen>
     <dimen name="square_corner_outher">2dp</dimen>
+    <dimen name="keyboard_height">230dp</dimen>
+
+    <!--popup-->
+    <dimen name="popup_margin">12dp</dimen>
+
+
 
 </resources>

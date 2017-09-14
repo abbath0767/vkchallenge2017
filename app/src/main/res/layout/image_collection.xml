@@ -13,6 +13,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <!--remove elevation!!-->
         <EditText
             android:id="@+id/post_edit_text"
             android:layout_width="match_parent"

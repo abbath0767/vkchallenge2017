@@ -95,7 +95,7 @@ public class CustomImageView extends ConstraintLayout {
     @Override
     protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
         int rest = calculateRest();
-//        int overWidth = getMeasuredWidth();
+        int overWidth = getMeasuredWidth();
 //        Timber.i("onMeasure specs W: %d, H: %d", widthMeasureSpec, heightMeasureSpec);
 //        Timber.i("onMeasure get() W: %d, H: %d", getMeasuredWidth(), getMeasuredHeight());
 //        Timber.i("onMeasure getSpec() W: %d, H: %d", MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.getSize(heightMeasureSpec));
@@ -133,12 +133,16 @@ public class CustomImageView extends ConstraintLayout {
             if (((ConstraintLayout) getParent()).getChildAt(i) instanceof TabLayout) {
                 minusHeight = (((ConstraintLayout) getParent()).getChildAt(i)).getHeight();
                 overHeight -= minusHeight;
-//                Timber.i("calculateRest minus Tab: %d", overHeight);
+//                Timber.i("calculateRest minus Tab: %d, over: %d",minusHeight, overHeight);
             } else if (((ConstraintLayout) getParent()).getChildAt(i) instanceof BottomBar) {
+                BottomBar b = (BottomBar) ((ConstraintLayout) getParent()).getChildAt(i);
+//                Timber.i("calculateRest %b, %b", b.get);
                 minusHeight = ((ConstraintLayout) getParent()).getChildAt(i).getHeight();
                 overHeight -= minusHeight;
-//                Timber.i("calculateRest minus Bot: %d", overHeight);
+//                Timber.i("calculateRest minus Bot: %d, over: %d", minusHeight, overHeight);
             }
+//            else if (((ConstraintLayout) getParent()).getChildAt(i) instanceof ConstraintLayout) {
+//            }
         }
 
         return overHeight;
@@ -175,7 +179,6 @@ public class CustomImageView extends ConstraintLayout {
                 .into(mImageViewTop);
         Glide.with(mContext)
                 .load(asset.get(1))
-                .asBitmap()
                 .into(mImageViewMid);
         Glide.with(mContext)
                 .load(asset.get(2))
@@ -188,7 +191,7 @@ public class CustomImageView extends ConstraintLayout {
         return 0;
     }
 
-    public void calculateAverageColour() {
+    public void setCorrectTextColour() {
         int color = calculateTextColour();
         if (color == 0) {
             mPostEditText.setTextColor(oldColors);

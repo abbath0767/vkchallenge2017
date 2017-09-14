@@ -10,9 +10,8 @@
         android:id="@+id/post_tab_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="92dp"
-        android:layout_marginRight="92dp"
-        android:elevation="2dp"
+        android:layout_marginLeft="@dimen/tab_layout_horizontal_margin"
+        android:layout_marginRight="@dimen/tab_layout_horizontal_margin"
         android:scaleY="-1"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -38,7 +37,6 @@
     <ImageButton
         android:id="@+id/post_toolbar_left_button"
         style="@style/ImageButtonToolbar"
-        android:elevation="2dp"
         android:src="@drawable/ic_toolbar_font"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -47,7 +45,6 @@
     <ImageButton
         android:id="@+id/post_toolbar_right_button"
         style="@style/ImageButtonToolbar"
-        android:elevation="2dp"
         android:src="@drawable/ic_toolbar_sticker"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -58,7 +55,6 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/post_view_devider_height"
         android:background="@color/black_with_big_transperent"
-        android:elevation="2dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/post_tab_layout"/>
@@ -77,10 +73,19 @@
         android:id="@+id/post_bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/bottom_bar_height"
-        android:elevation="2dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/cover_for_popup"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/cover_for_popup"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/keyboard_height"
+        android:background="@android:color/transparent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
 
 </android.support.constraint.ConstraintLayout>

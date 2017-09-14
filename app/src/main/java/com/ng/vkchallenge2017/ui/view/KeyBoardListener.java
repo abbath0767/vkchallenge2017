@@ -3,10 +3,15 @@ package com.ng.vkchallenge2017.ui.view;
 import android.app.Activity;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.PopupWindow;
 
 import java.lang.ref.WeakReference;
+
+import timber.log.Timber;
 
 /**
  * Created by nikitagusarov on 12.09.17.
@@ -14,39 +19,48 @@ import java.lang.ref.WeakReference;
 
 public class KeyBoardListener {
 
-    private static final int KEYBOARD_MIN_HEIGHT = 150;
+    public static final int KEYBOARD_MIN_HEIGHT = 150;
     private static WeakReference<View> decoderViewWeak;
 
     public interface KeyBoardMoveListener {
-        void isShown(boolean isShowing);
+        void isShown(boolean isShowing, int hightDifference);
     }
 
-    public static void observeKeyBoard(@NonNull final Activity activity, @NonNull final KeyBoardMoveListener listener) {
-        decoderViewWeak = new WeakReference<>(activity.getWindow().getDecorView());
-        decoderViewWeak.get().getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            final Rect rect = new Rect();
-            int lastVisibleDecorViewHeight;
+    private static int previousHeightDiffrence = 0;
 
-            @Override
-            public void onGlobalLayout() {
-                decoderViewWeak.get().getWindowVisibleDisplayFrame(rect);
-                int rectHeight = rect.height();
+    public static void observeKeyBoard(@NonNull final ConstraintLayout parentLayout,
+                                       @NonNull final PopupWindow popupWindow,
+                                       @NonNull final KeyBoardMoveListener listener) {
 
-                if (lastVisibleDecorViewHeight != 0) {
-                    if (lastVisibleDecorViewHeight > rectHeight + KEYBOARD_MIN_HEIGHT) {
-                        // Calculate current keyboard height (this includes also navigation bar height when in fullscreen mode).
-//                        int currentKeyboardHeight = decoderViewWeak.get().getHeight() - rect.bottom;
-                        // Notify listener about keyboard being shown.
-                        listener.isShown(true);
-                    } else if (lastVisibleDecorViewHeight + KEYBOARD_MIN_HEIGHT < rectHeight) {
-                        // Notify listener about keyboard being hidden.
-                        listener.isShown(false);
+        parentLayout.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+
+                    @Override
+                    public void onGlobalLayout() {
+
+                        Rect r = new Rect();
+                        parentLayout.getWindowVisibleDisplayFrame(r);
+
+                        int screenHeight = parentLayout.getRootView()
+                                .getHeight();
+
+                        int heightDifference = screenHeight - (r.bottom);
+
+                        if (previousHeightDiffrence - heightDifference > 50) {
+                                popupWindow.dismiss();
+                        }
+
+                        previousHeightDiffrence = heightDifference;
+                        if (heightDifference > 100) {
+
+                            listener.isShown(true, heightDifference);
+
+                        } else {
+
+                            listener.isShown(false, 0);
+                        }
                     }
-                }
-                // Save current decor view height for the next call.
-                lastVisibleDecorViewHeight = rectHeight;
-            }
-        });
-
+                });
     }
 }
+
