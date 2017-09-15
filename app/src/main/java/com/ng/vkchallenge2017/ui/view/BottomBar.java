@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
 
 import com.ng.vkchallenge2017.R;
@@ -53,7 +54,7 @@ public class BottomBar extends ConstraintLayout {
     private void initView() {
         mInflater.inflate(R.layout.bottom_bar, this, true);
         ButterKnife.bind(this);
-
+        mSentButton.setEnabled(false);
 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -73,5 +74,13 @@ public class BottomBar extends ConstraintLayout {
 
     public void setSquareClickListener(@NonNull final BottomSquareRVAdapter.SquareClickListener listener) {
         mRVAdapter.setSquareClickListener(listener);
+    }
+
+    public void setSentButtonEnabled(final boolean isEnabled) {
+        mSentButton.setEnabled(isEnabled);
+    }
+
+    public void setSentButtonClickListener(final OnClickListener sentButtonClickListener) {
+        mSentButton.setOnClickListener(sentButtonClickListener);
     }
 }

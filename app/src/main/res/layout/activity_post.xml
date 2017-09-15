@@ -65,7 +65,7 @@
         android:id="@+id/post_image_view"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/post_bottom_bar"
+        app:layout_constraintBottom_toTopOf="@id/post_bottom_bar"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/post_devider_top"

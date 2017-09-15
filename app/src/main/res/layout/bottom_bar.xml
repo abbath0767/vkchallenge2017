@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/bottom_bar_send_button"
+        app:layout_constraintRight_toLeftOf="@id/bottom_bar_send_button"
         />
 
     <View
@@ -42,7 +42,7 @@
         android:layout_marginRight="@dimen/button_margin_action_send_horizontal"
         android:layout_marginTop="@dimen/button_margin_action_send"
         android:textSize="@dimen/bottom_bar_post_button_text_size"
-        android:background="@drawable/post_btn_sent_button"
+        android:background="@drawable/selector_button_sent"
         style="@style/LoginButtonStyle"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"

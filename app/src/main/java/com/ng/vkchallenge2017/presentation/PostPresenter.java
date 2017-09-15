@@ -76,6 +76,17 @@ public class PostPresenter extends MvpPresenter<PostView> {
         }
     }
 
+    public void textChange(final String text) {
+        if (text.isEmpty()) {
+            Timber.i("textChange: text is empty!");
+            getViewState().enableSentButton(false);
+        } else {
+            Timber.i("textChange: text: \"%s\".", text);
+            getViewState().enableSentButton(true);
+
+        }
+    }
+
     public enum Mode {
         POST, HISTORY
     }

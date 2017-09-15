@@ -12,11 +12,14 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.design.widget.TabLayout;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.graphics.Palette;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -91,7 +94,10 @@ public class CustomImageView extends ConstraintLayout {
         ButterKnife.bind(this);
 
         saveDefaultTextColour();
+    }
 
+    public void setOnTextChangeListener(@NonNull final TextWatcher textWatcher) {
+        mPostEditText.addTextChangedListener(textWatcher);
     }
 
     @Override

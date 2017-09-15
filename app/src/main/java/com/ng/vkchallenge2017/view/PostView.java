@@ -29,4 +29,6 @@ public interface PostView extends MvpView {
     void setAdapterData(List<PhotoSquareBase> squares);
 
     void checkPermission();
+
+    void enableSentButton(boolean isEnabled);
 }

@@ -10,6 +10,8 @@ import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,6 +20,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.Toast;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -100,6 +103,13 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
             }
         });
 
+        mBottomBar.setSentButtonClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                Toast.makeText(PostActivity.this, "send click", Toast.LENGTH_LONG).show();
+            }
+        });
+
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(final TabLayout.Tab tab) {
@@ -125,6 +135,23 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
             public boolean onTouch(final View view, final MotionEvent motionEvent) {
                 disablePopup();
                 return false;
+            }
+        });
+
+        mCustomImageView.setOnTextChangeListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(final CharSequence charSequence, final int i, final int i1, final int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(final CharSequence charSequence, final int i, final int i1, final int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(final Editable editable) {
+                mPostPresenter.textChange(editable.toString());
             }
         });
 
@@ -328,5 +355,10 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         Timber.i("checkPermission");
         if (true)
             mPostPresenter.loadPhoto();
+    }
+
+    @Override
+    public void enableSentButton(final boolean isEnabled) {
+        mBottomBar.setSentButtonEnabled(isEnabled);
     }
 }
