@@ -32,6 +32,8 @@ public class PostPresenter extends MvpPresenter<PostView> {
     private Mode mMode = POST;
     private boolean loaded = false;
 
+    private int photoPosition = 2;
+
     public PostPresenter(PhotoRepository photoRepository) {
         mSquareRepository = SquareRepositoryImpl.getInstance();
         mPhotoRepository = photoRepository;
@@ -53,6 +55,10 @@ public class PostPresenter extends MvpPresenter<PostView> {
             getViewState().setUpPopup();
             if (!loaded)
                 getViewState().checkPermission();
+            else if (photoPosition != 2) {
+                getViewState().setSelectedPhotoPosition(photoPosition);
+                getViewState().setUpPhoto(mPhotoRepository.getPhoto(photoPosition));
+            }
         }
     }
 
@@ -68,9 +74,7 @@ public class PostPresenter extends MvpPresenter<PostView> {
     }
 
     private void loadPhoto() {
-        Timber.i("loadPhoto");
         if (mPhotoRepository.getPhotoSquares().size() != MAX_SQUARE_COUNT || !loaded) {
-            Timber.i("loadPhoto need load");
             mPhotoRepository.loadPhotoFromGallery();
             loaded = true;
         }
@@ -78,10 +82,8 @@ public class PostPresenter extends MvpPresenter<PostView> {
 
     public void textChange(final String text) {
         if (text.isEmpty()) {
-            Timber.i("textChange: text is empty!");
             getViewState().enableSentButton(false);
         } else {
-            Timber.i("textChange: text: \"%s\".", text);
             getViewState().enableSentButton(true);
 
         }
@@ -92,9 +94,10 @@ public class PostPresenter extends MvpPresenter<PostView> {
     }
 
     public void onPhotoClick(final int position) {
-        Timber.i("onPhotoClick %d", position);
-        if (position > 1)
+        if (position > 1) {
+            photoPosition = position;
             getViewState().setUpPhoto(mPhotoRepository.getPhoto(position));
+        }
     }
 
     public enum Mode {

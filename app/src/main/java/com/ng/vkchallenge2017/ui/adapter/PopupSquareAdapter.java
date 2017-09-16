@@ -39,6 +39,11 @@ public class PopupSquareAdapter extends RecyclerView.Adapter<PopupSquareAdapter.
 
     private int selectedItem = 2;
 
+    public void setSelectedItem(int position) {
+        selectedItem = position;
+        notifyDataSetChanged();
+    }
+
     public PopupSquareAdapter(@NonNull final Context context) {
         mContext = context;
     }

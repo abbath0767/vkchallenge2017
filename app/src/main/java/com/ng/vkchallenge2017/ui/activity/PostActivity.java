@@ -250,7 +250,14 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
 
     @Override
     public void setUpPhoto(final PhotoSquareBase photo) {
+        Timber.i("setUpPhoto");
         mCustomImageView.setUpPhoto(photo);
+    }
+
+    @Override
+    public void setSelectedPhotoPosition(final int photoPosition) {
+        Timber.i("setSelectedPhotoPosition: %d", photoPosition);
+        mPopupSquareAdapter.setSelectedItem(photoPosition);
     }
 
     @Override
@@ -324,7 +331,6 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
 
     @Override
     public void setAdapterData(final List<PhotoSquareBase> squares) {
-        Timber.i("setAdapterData size: %d", squares.size());
         mPopupSquareAdapter.setSquares(squares);
         mPopupSquareAdapter.notifyDataSetChanged();
         mPopupSquareAdapter.setSquareClickListener(new PopupSquareAdapter.SquareClickListener() {
@@ -336,7 +342,6 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     }
 
     private void initRecyclerView() {
-        Timber.i("initRecyclerView");
         mPhotoRecyclerView = popupView.findViewById(R.id.popup_photo_recycler);
 
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2, OrientationHelper.HORIZONTAL, false);
