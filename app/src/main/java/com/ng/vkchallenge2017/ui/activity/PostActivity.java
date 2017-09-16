@@ -2,7 +2,6 @@ package com.ng.vkchallenge2017.ui.activity;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -49,7 +48,6 @@ import com.ng.vkchallenge2017.ui.view.CustomImageView;
 import com.ng.vkchallenge2017.ui.view.KeyBoardListener;
 import com.ng.vkchallenge2017.view.PostView;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 
@@ -251,6 +249,11 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     }
 
     @Override
+    public void setUpPhoto(final PhotoSquareBase photo) {
+        mCustomImageView.setUpPhoto(photo);
+    }
+
+    @Override
     public void disablePopup() {
         if (mPopupWindow.isShowing()) {
             mPopupWindow.dismiss();
@@ -327,7 +330,7 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         mPopupSquareAdapter.setSquareClickListener(new PopupSquareAdapter.SquareClickListener() {
             @Override
             public void onSquareClick(final int position) {
-                Timber.i("onSquareClick %d", position);
+                mPostPresenter.onPhotoClick(position);
             }
         });
     }

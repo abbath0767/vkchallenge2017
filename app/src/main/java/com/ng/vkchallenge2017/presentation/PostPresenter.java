@@ -91,6 +91,12 @@ public class PostPresenter extends MvpPresenter<PostView> {
         loadPhoto();
     }
 
+    public void onPhotoClick(final int position) {
+        Timber.i("onPhotoClick %d", position);
+        if (position > 1)
+            getViewState().setUpPhoto(mPhotoRepository.getPhoto(position));
+    }
+
     public enum Mode {
         POST, HISTORY
     }

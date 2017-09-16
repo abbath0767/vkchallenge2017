@@ -38,6 +38,7 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.ng.vkchallenge2017.R;
+import com.ng.vkchallenge2017.model.photo.PhotoSquareBase;
 import com.ng.vkchallenge2017.presentation.PostPresenter;
 
 import java.util.List;
@@ -221,6 +222,16 @@ public class CustomImageView extends ConstraintLayout {
 
     public void setOnTextTouchListener(final OnTouchListener onTextTouchListener) {
         mPostEditText.setOnTouchListener(onTextTouchListener);
+    }
+
+    public void setUpPhoto(final PhotoSquareBase photo) {
+        Glide.clear(mImageViewTop);
+        Glide.clear(mImageViewBot);
+        Glide.with(mContext)
+                .load((String)photo.getResource())
+                .asBitmap()
+                .fitCenter()
+                .into(mImageViewMid);
     }
 }
 

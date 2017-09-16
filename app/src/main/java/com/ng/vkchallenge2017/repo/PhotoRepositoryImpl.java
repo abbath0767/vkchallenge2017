@@ -54,7 +54,6 @@ public class PhotoRepositoryImpl implements PhotoRepository {
 
     @Override
     public void loadPhotoFromGallery() {
-        Timber.i("loadPhotoFromGallery");
         Uri uri;
         List<String> list = new ArrayList<>(MAX_SQUARE_COUNT - 2);
         Cursor cursor;
@@ -71,7 +70,6 @@ public class PhotoRepositoryImpl implements PhotoRepository {
 
         cursor = mContext.getContentResolver().query(uri, projection, null, null, null);
         cursor.moveToFirst();
-        Timber.i("loadPhotoFromGallery. count: %d", cursor.getCount());
         int imageUriColumn = cursor.getColumnIndex(
                 MediaStore.Images.Media.DATA);
 
@@ -82,12 +80,16 @@ public class PhotoRepositoryImpl implements PhotoRepository {
             list.add(path);
         } while (cursor.moveToNext() && i < MAX_SQUARE_COUNT - 2);
 
-        Timber.i("loadPhotoFromGallery size: %d", list.size());
         List<PhotoSquareBase> listPhotoSquares = new ArrayList<>(MAX_SQUARE_COUNT - 2);
         for (i = list.size() - 1; i >= 0; i--) {
             listPhotoSquares.add(new PhotoSquare(list.get(i)));
         }
 
         addPhotos(listPhotoSquares);
+    }
+
+    @Override
+    public PhotoSquareBase getPhoto(final int position) {
+        return mPhotoSquareBases.get(position);
     }
 }

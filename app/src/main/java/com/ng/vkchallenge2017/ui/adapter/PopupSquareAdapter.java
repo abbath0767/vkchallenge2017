@@ -37,7 +37,7 @@ public class PopupSquareAdapter extends RecyclerView.Adapter<PopupSquareAdapter.
     @Nullable
     private SquareClickListener mSquareClickListener;
 
-    private int selectedItem = 1;
+    private int selectedItem = 2;
 
     public PopupSquareAdapter(@NonNull final Context context) {
         mContext = context;

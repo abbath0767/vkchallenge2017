@@ -12,4 +12,5 @@ public interface PhotoRepository {
     List<PhotoSquareBase> getPhotoSquares();
     void addPhotos(List<PhotoSquareBase> list);
     void loadPhotoFromGallery();
+    PhotoSquareBase getPhoto(int position);
 }
