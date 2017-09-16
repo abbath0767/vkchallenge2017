@@ -26,8 +26,10 @@ public class PhotoRepositoryImpl implements PhotoRepository {
     // 100 photo + 2 actions...
     public static final int MAX_SQUARE_COUNT = 102;
 
-    @NonNull private final Context mContext;
-    @NonNull private List<PhotoSquareBase> mPhotoSquareBases;
+    @NonNull
+    private final Context mContext;
+    @NonNull
+    private List<PhotoSquareBase> mPhotoSquareBases;
 
     public PhotoRepositoryImpl(@NonNull final Context context) {
         mContext = context;
@@ -37,8 +39,6 @@ public class PhotoRepositoryImpl implements PhotoRepository {
     private void initList() {
         mPhotoSquareBases = new ArrayList<>();
         mPhotoSquareBases.add(new ActionSquare(R.drawable.ic_photopicker_camera));
-        mPhotoSquareBases.add(new ActionSquare(R.drawable.ic_photopicker_albums));
-        mPhotoSquareBases.add(new ActionSquare(R.drawable.ic_photopicker_albums));
         mPhotoSquareBases.add(new ActionSquare(R.drawable.ic_photopicker_albums));
     }
 
@@ -58,28 +58,36 @@ public class PhotoRepositoryImpl implements PhotoRepository {
         Uri uri;
         List<String> list = new ArrayList<>(MAX_SQUARE_COUNT - 2);
         Cursor cursor;
-        int columnIndex;
+        String bucket;
         String path;
-        uri = MediaStore.Images.Media.INTERNAL_CONTENT_URI;
+        String id;
+        uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
-        String[] projection = {MediaStore.MediaColumns.DATA};
+        String[] projection = {
+                MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
+                MediaStore.Images.Media.DATA,
+                MediaStore.Images.Media._ID
+        };
 
         cursor = mContext.getContentResolver().query(uri, projection, null, null, null);
-        columnIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        cursor.moveToFirst();
+        Timber.i("loadPhotoFromGallery. count: %d", cursor.getCount());
+        int imageUriColumn = cursor.getColumnIndex(
+                MediaStore.Images.Media.DATA);
+
         int i = 0;
-        while(cursor.moveToNext()) {
-            path = cursor.getString(columnIndex);
-            Timber.i("loadPhotoFromGallery %d path: %s", i++, path);
+        do {
+            i++;
+            path = cursor.getString(imageUriColumn);
             list.add(path);
-        }
+        } while (cursor.moveToNext() && i < MAX_SQUARE_COUNT - 2);
 
         Timber.i("loadPhotoFromGallery size: %d", list.size());
         List<PhotoSquareBase> listPhotoSquares = new ArrayList<>(MAX_SQUARE_COUNT - 2);
-        for (String pathStr: list) {
-            listPhotoSquares.add(new PhotoSquare(pathStr));
+        for (i = list.size() - 1; i >= 0; i--) {
+            listPhotoSquares.add(new PhotoSquare(list.get(i)));
         }
 
         addPhotos(listPhotoSquares);
     }
-
 }

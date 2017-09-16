@@ -67,7 +67,7 @@ public class PostPresenter extends MvpPresenter<PostView> {
         getViewState().setUpMode(mMode);
     }
 
-    public void loadPhoto() {
+    private void loadPhoto() {
         Timber.i("loadPhoto");
         if (mPhotoRepository.getPhotoSquares().size() != MAX_SQUARE_COUNT || !loaded) {
             Timber.i("loadPhoto need load");
@@ -85,6 +85,10 @@ public class PostPresenter extends MvpPresenter<PostView> {
             getViewState().enableSentButton(true);
 
         }
+    }
+
+    public void permissionOk() {
+        loadPhoto();
     }
 
     public enum Mode {

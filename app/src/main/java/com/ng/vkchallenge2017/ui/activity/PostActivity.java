@@ -1,11 +1,17 @@
 package com.ng.vkchallenge2017.ui.activity;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.OrientationHelper;
@@ -43,6 +49,8 @@ import com.ng.vkchallenge2017.ui.view.CustomImageView;
 import com.ng.vkchallenge2017.ui.view.KeyBoardListener;
 import com.ng.vkchallenge2017.view.PostView;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -55,6 +63,8 @@ import timber.log.Timber;
  */
 
 public class PostActivity extends MvpAppCompatActivity implements PostView {
+
+    public static final int MY_PERMISSIONS_REQUEST_READ_STORAGE = 13;
 
     @InjectPresenter
     PostPresenter mPostPresenter;
@@ -184,7 +194,7 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         int tabCount = ((LinearLayout) mTabLayout.getChildAt(0)).getChildCount();
         for (int i = 0; i < tabCount; i++) {
             ((((LinearLayout) ((LinearLayout) mTabLayout.getChildAt(0)).getChildAt(i)).getChildAt(1))).setScaleY(-1);
-            ((AppCompatTextView) ((((LinearLayout) ((LinearLayout) mTabLayout.getChildAt(0)).getChildAt(i)).getChildAt(1)))).setTextSize( 14f);
+            ((AppCompatTextView) ((((LinearLayout) ((LinearLayout) mTabLayout.getChildAt(0)).getChildAt(i)).getChildAt(1)))).setTextSize(14f);
         }
 
         mTabLayout.requestLayout();
@@ -249,7 +259,6 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
 
     @Override
     public void setUpPopup() {
-        //checkPermission
         forceShowKeyboardIfNeed();
         if (!mPopupWindow.isShowing()) {
 
@@ -325,7 +334,7 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
 
     private void initRecyclerView() {
         Timber.i("initRecyclerView");
-        mPhotoRecyclerView =  popupView.findViewById(R.id.popup_photo_recycler);
+        mPhotoRecyclerView = popupView.findViewById(R.id.popup_photo_recycler);
 
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2, OrientationHelper.HORIZONTAL, false);
         mPhotoRecyclerView.setLayoutManager(layoutManager);
@@ -351,14 +360,47 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     }
 
     @Override
-    public void checkPermission() {
-        Timber.i("checkPermission");
-        if (true)
-            mPostPresenter.loadPhoto();
+    public void enableSentButton(final boolean isEnabled) {
+        mBottomBar.setSentButtonEnabled(isEnabled);
     }
 
     @Override
-    public void enableSentButton(final boolean isEnabled) {
-        mBottomBar.setSentButtonEnabled(isEnabled);
+    public void checkPermission() {
+        Timber.i("checkPermission");
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            Timber.i("checkPermission. read contact not granted!");
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                Timber.i("checkPermission, shouldShowRequestPermissionRationale");
+                //todo add dialog!
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_REQUEST_READ_STORAGE);
+            }
+        } else {
+            mPostPresenter.permissionOk();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
+        Timber.i("onRequestPermissionsResult," +
+                " request: %d, perms: [%s], results: [%s]", requestCode, Arrays.toString(permissions), Arrays.toString(grantResults));
+
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_STORAGE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Timber.i("onRequestPermissionsResult permission granted!");
+                    mPostPresenter.permissionOk();
+                } else {
+                    Timber.i("onRequestPermissionsResult. permission not granted");
+                    //todo show snackbar
+                }
+                return;
+            }
+        }
     }
 }
