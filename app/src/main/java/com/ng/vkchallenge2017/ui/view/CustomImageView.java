@@ -20,7 +20,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.ng.vkchallenge2017.R;
-import com.ng.vkchallenge2017.Util.BackgroundColorSpanMy;
+import com.ng.vkchallenge2017.Util.SpanColoredBackground;
 import com.ng.vkchallenge2017.model.photo.PhotoSquareBase;
 import com.ng.vkchallenge2017.model.text_style.TextStyle;
 import com.ng.vkchallenge2017.presentation.PostPresenter;
@@ -213,7 +213,14 @@ public class CustomImageView extends ConstraintLayout {
             String text = mPostEditText.getText().toString();
 
             Spannable span = new SpannableString(text);
-            span.setSpan(new BackgroundColorSpanMy(ContextCompat.getColor(mContext, textStyle.getBackgroundColour()), 4), 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            span.setSpan(
+                    new SpanColoredBackground(
+                            ContextCompat.getColor(mContext, textStyle.getBackgroundColour()),
+                            (int) getResources().getDimension(R.dimen.square_corner),
+                            (int) getResources().getDimension(R.dimen.square_corner)),
+                    0,
+                    text.length(),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             mPostEditText.setTextColor(ContextCompat.getColor(getContext(), textStyle.getTextColour()));
             mPostEditText.setText(span);

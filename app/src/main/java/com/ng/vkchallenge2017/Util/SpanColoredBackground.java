@@ -2,7 +2,6 @@ package com.ng.vkchallenge2017.Util;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.text.style.LineBackgroundSpan;
 
@@ -12,17 +11,18 @@ import timber.log.Timber;
  * Created by nikitagusarov on 16.09.17.
  */
 
-public class BackgroundColorSpanMy implements LineBackgroundSpan {
+public class SpanColoredBackground implements LineBackgroundSpan {
     private int mBackgroundColor;
     private int mPadding;
+    private int mCornerRadius;
     private RectF mBgRect;
 
-    public BackgroundColorSpanMy(int backgroundColor, int padding) {
+    public SpanColoredBackground(int backgroundColor, int padding, int cornerRadius) {
         super();
         mBackgroundColor = backgroundColor;
         mPadding = padding;
-        // Precreate rect for performance
         mBgRect = new RectF();
+        mCornerRadius = cornerRadius;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class BackgroundColorSpanMy implements LineBackgroundSpan {
                 right - crop + mPadding,
                 bottom + mPadding - 2);
         p.setColor(mBackgroundColor);
-        c.drawRoundRect(mBgRect, 10, 10, p);
+        c.drawRoundRect(mBgRect, mCornerRadius, mCornerRadius, p);
         p.setColor(paintColor);
     }
 }
