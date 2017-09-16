@@ -1,47 +1,30 @@
 package com.ng.vkchallenge2017.ui.view;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.LayerDrawable;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
 import android.support.design.widget.TabLayout;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.graphics.Palette;
-import android.text.Editable;
+import android.support.v4.content.ContextCompat;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.ng.vkchallenge2017.R;
+import com.ng.vkchallenge2017.Util.BackgroundColorSpanMy;
 import com.ng.vkchallenge2017.model.photo.PhotoSquareBase;
+import com.ng.vkchallenge2017.model.text_style.TextStyle;
 import com.ng.vkchallenge2017.presentation.PostPresenter;
 
-import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import butterknife.BindView;
@@ -68,8 +51,6 @@ public class CustomImageView extends ConstraintLayout {
     private LayoutInflater mInflater;
     private PostPresenter.Mode mMode = PostPresenter.Mode.POST;
 
-    private ColorStateList oldColors;
-
     public CustomImageView(final Context context) {
         super(context);
         mContext = context;
@@ -95,7 +76,8 @@ public class CustomImageView extends ConstraintLayout {
         mInflater.inflate(R.layout.image_collection, this, true);
         ButterKnife.bind(this);
 
-        saveDefaultTextColour();
+        mPostEditText.bringToFront();
+        mPostEditText.requestLayout();
     }
 
     public void setOnTextChangeListener(@NonNull final TextWatcher textWatcher) {
@@ -203,25 +185,7 @@ public class CustomImageView extends ConstraintLayout {
                 .into(mImageViewBot);
     }
 
-    private int calculateTextColour() {
-
-        return 0;
-    }
-
-    public void setCorrectTextColour() {
-        int color = calculateTextColour();
-        if (color == 0) {
-            mPostEditText.setTextColor(oldColors);
-        } else {
-            mPostEditText.setTextColor(color);
-        }
-    }
-
-    private void saveDefaultTextColour() {
-        oldColors = mPostEditText.getTextColors();
-    }
-
-    public void setOnTextTouchListener(final OnTouchListener onTextTouchListener) {
+    public void setOnTextTouchListener(@NonNull final OnTouchListener onTextTouchListener) {
         mPostEditText.setOnTouchListener(onTextTouchListener);
     }
 
@@ -229,15 +193,39 @@ public class CustomImageView extends ConstraintLayout {
         Glide.clear(mImageViewTop);
         Glide.clear(mImageViewBot);
         Glide.with(mContext)
-                .load((String)photo.getResource())
+                .load((String) photo.getResource())
                 .asBitmap()
                 .fitCenter()
                 .into(mImageViewMid);
     }
 
-    public void setImageBitmap(final Bitmap imageBitmap) {
+    public void setImageBitmap(@NonNull final Bitmap imageBitmap) {
         Glide.clear(mImageViewMid);
-        mImageViewMid.setImageBitmap(imageBitmap );
+        mImageViewMid.setImageBitmap(imageBitmap);
+    }
+
+    public void setTextStyle(final TextStyle textStyle) {
+        Timber.i("setTextStyle %d %d", textStyle.getBackgroundColour(), textStyle.getTextColour());
+        if (textStyle.getBackgroundColour() == android.R.color.transparent) {
+            mPostEditText.setTextColor(ContextCompat.getColor(getContext(), textStyle.getTextColour()));
+        } else {
+
+            String text = mPostEditText.getText().toString();
+
+            Spannable span = new SpannableString(text);
+            span.setSpan(new BackgroundColorSpanMy(ContextCompat.getColor(mContext, textStyle.getBackgroundColour()), 4), 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            mPostEditText.setTextColor(ContextCompat.getColor(getContext(), textStyle.getTextColour()));
+            mPostEditText.setText(span);
+//            final Spannable span = new RoundedCornersBackgroundSpan.Builder(getContext())
+//                    .setCornersRadiusRes(R.dimen.square_corner)
+//                    .setTextAlignment(RoundedCornersBackgroundSpan.ALIGN_CENTER)
+//                    .addTextPart(mPostEditText.getText().toString(), textStyle.getBackgroundColour())
+//                    .build();
+//
+//            mPostEditText.setText(span);
+        }
+        mPostEditText.setSelection(mPostEditText.length());
     }
 }
 

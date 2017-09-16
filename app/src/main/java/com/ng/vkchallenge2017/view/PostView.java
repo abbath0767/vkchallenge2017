@@ -5,6 +5,7 @@ import com.arellomobile.mvp.viewstate.strategy.SingleStateStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 import com.ng.vkchallenge2017.model.photo.PhotoSquareBase;
 import com.ng.vkchallenge2017.model.square.BottomSquareBase;
+import com.ng.vkchallenge2017.model.text_style.TextStyle;
 import com.ng.vkchallenge2017.presentation.PostPresenter;
 
 import java.util.List;
@@ -39,4 +40,6 @@ public interface PostView extends MvpView {
     void showCamera();
 
     void showGallery();
+
+    void setTextStyle(TextStyle style);
 }

@@ -2,17 +2,12 @@ package com.ng.vkchallenge2017.presentation;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
-import com.ng.vkchallenge2017.R;
-import com.ng.vkchallenge2017.model.square.BottomSquareBase;
-import com.ng.vkchallenge2017.model.square.BottomSquareColourGradient;
-import com.ng.vkchallenge2017.model.square.BottomSquareDefault;
 import com.ng.vkchallenge2017.repo.PhotoRepository;
 import com.ng.vkchallenge2017.repo.SquareRepository;
 import com.ng.vkchallenge2017.repo.SquareRepositoryImpl;
+import com.ng.vkchallenge2017.repo.TextStyleContainer;
+import com.ng.vkchallenge2017.repo.TextStyleContainerImpl;
 import com.ng.vkchallenge2017.view.PostView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import timber.log.Timber;
 
@@ -29,14 +24,17 @@ public class PostPresenter extends MvpPresenter<PostView> {
 
     private SquareRepository mSquareRepository;
     private PhotoRepository mPhotoRepository;
+    private TextStyleContainer mTextStyleContainer;
     private Mode mMode = POST;
     private boolean loaded = false;
 
     private int photoPosition = 2;
+    private int textStyleNum = 0;
 
     public PostPresenter(PhotoRepository photoRepository) {
         mSquareRepository = SquareRepositoryImpl.getInstance();
         mPhotoRepository = photoRepository;
+        mTextStyleContainer = TextStyleContainerImpl.getInstance();
     }
 
     @Override
@@ -44,6 +42,7 @@ public class PostPresenter extends MvpPresenter<PostView> {
         super.onFirstViewAttach();
         getViewState().setBottomBarRecycler(mSquareRepository.getSquares());
         getViewState().setAdapterData(mPhotoRepository.getPhotoSquares());
+        getViewState().setTextStyle(mTextStyleContainer.getStyle(textStyleNum));
     }
 
     public void onSquareClick(final int position) {
@@ -54,6 +53,7 @@ public class PostPresenter extends MvpPresenter<PostView> {
         } else {
             Timber.i("onSquareClick %b, %d", loaded, photoPosition);
             getViewState().setUpPopup();
+
             if (!loaded)
                 getViewState().checkPermission();
             else {
@@ -105,6 +105,23 @@ public class PostPresenter extends MvpPresenter<PostView> {
             getViewState().showCamera();
         } else if (position == 1) {
             getViewState().showGallery();
+        }
+    }
+
+    public void onButtonLeftClick() {
+        int nextStyleNum = nextStyleNum();
+        Timber.i("onButtonLeftClick : %d ", nextStyleNum);
+        getViewState().setTextStyle(mTextStyleContainer.getStyle(nextStyleNum));
+    }
+
+    private int nextStyleNum() {
+        int max = mTextStyleContainer.getStyles().size() - 1;
+        if (textStyleNum == max) {
+            textStyleNum = 0;
+            return textStyleNum;
+        } else {
+            textStyleNum += 1;
+            return textStyleNum;
         }
     }
 

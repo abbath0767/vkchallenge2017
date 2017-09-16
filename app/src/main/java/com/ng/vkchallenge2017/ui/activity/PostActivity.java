@@ -44,6 +44,7 @@ import com.ng.vkchallenge2017.model.square.SimpleThumb;
 import com.ng.vkchallenge2017.model.square.Thumb;
 import com.ng.vkchallenge2017.model.square.ThumbAsset;
 import com.ng.vkchallenge2017.model.square.Thumbs;
+import com.ng.vkchallenge2017.model.text_style.TextStyle;
 import com.ng.vkchallenge2017.presentation.PostPresenter;
 import com.ng.vkchallenge2017.repo.PhotoRepositoryImpl;
 import com.ng.vkchallenge2017.ui.adapter.PopupSquareAdapter;
@@ -112,8 +113,14 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         ButterKnife.bind(this);
 
         moveStripToTop();
-        //todo
         disableClickAnimation();
+
+        mImageButtonLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                mPostPresenter.onButtonLeftClick();
+            }
+        });
 
         mBottomBar.setSquareClickListener(new BottomSquareRVAdapter.SquareClickListener() {
             @Override
@@ -308,7 +315,6 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
 
     private void requestImageView() {
         mCustomImageView.requestLayout();
-        mCustomImageView.setCorrectTextColour();
     }
 
     @Override
@@ -381,6 +387,11 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     @Override
     public void enableSentButton(final boolean isEnabled) {
         mBottomBar.setSentButtonEnabled(isEnabled);
+    }
+
+    @Override
+    public void setTextStyle(final TextStyle style) {
+        mCustomImageView.setTextStyle(style);
     }
 
     @Override
