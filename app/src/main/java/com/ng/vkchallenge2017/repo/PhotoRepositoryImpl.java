@@ -57,9 +57,7 @@ public class PhotoRepositoryImpl implements PhotoRepository {
         Uri uri;
         List<String> list = new ArrayList<>(MAX_SQUARE_COUNT - 2);
         Cursor cursor;
-        String bucket;
         String path;
-        String id;
         uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
         String[] projection = {

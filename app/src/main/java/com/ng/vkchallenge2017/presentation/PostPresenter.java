@@ -104,7 +104,7 @@ public class PostPresenter extends MvpPresenter<PostView> {
         } else if (position == 0) {
             getViewState().showCamera();
         } else if (position == 1) {
-
+            getViewState().showGallery();
         }
     }
 

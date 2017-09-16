@@ -70,6 +70,7 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
 
     public static final int MY_PERMISSIONS_REQUEST_READ_STORAGE = 13;
     public static final int REQUEST_CAMERA = 23;
+    public static final int REQUEST_GALLERY = 33;
 
 
     @InjectPresenter
@@ -384,8 +385,6 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
 
     @Override
     public void showCamera() {
-        Timber.i("showCamera");
-
         ContentValues content = new ContentValues();
         content.put(MediaStore.Images.Media.TITLE, "new pic");
         content.put(MediaStore.Images.Media.DESCRIPTION, "from camera");
@@ -398,6 +397,15 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_CAMERA);
         }
+    }
+
+    @Override
+    public void showGallery() {
+        Intent getIntent = new Intent(
+                Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        getIntent.setType("image/*");
+        startActivityForResult(getIntent, REQUEST_GALLERY);
     }
 
     @Override
@@ -443,13 +451,27 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        if (requestCode == REQUEST_CAMERA && resultCode == RESULT_OK) {
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(
-                        getContentResolver(), photoUri);
-                mCustomImageView.setImageBitmap(bitmap);
-            } catch (IOException e) {
-                e.printStackTrace();
+        switch (requestCode) {
+            case REQUEST_CAMERA: {
+                if (resultCode == RESULT_OK) {
+                    try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(
+                                getContentResolver(), photoUri);
+                        mCustomImageView.setImageBitmap(bitmap);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+            }
+            case REQUEST_GALLERY: {
+                photoUri = data.getData();
+                try {
+                    mCustomImageView.setImageBitmap(MediaStore.Images.Media.getBitmap(getContentResolver(), photoUri));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
             }
         }
     }
