@@ -41,6 +41,7 @@ import com.ng.vkchallenge2017.R;
 import com.ng.vkchallenge2017.model.photo.PhotoSquareBase;
 import com.ng.vkchallenge2017.presentation.PostPresenter;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import butterknife.BindView;
@@ -232,6 +233,11 @@ public class CustomImageView extends ConstraintLayout {
                 .asBitmap()
                 .fitCenter()
                 .into(mImageViewMid);
+    }
+
+    public void setImageBitmap(final Bitmap imageBitmap) {
+        Glide.clear(mImageViewMid);
+        mImageViewMid.setImageBitmap(imageBitmap );
     }
 }
 

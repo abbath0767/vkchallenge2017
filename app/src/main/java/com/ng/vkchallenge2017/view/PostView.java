@@ -35,4 +35,6 @@ public interface PostView extends MvpView {
     void setUpPhoto(final PhotoSquareBase photo);
 
     void setSelectedPhotoPosition(final int photoPosition);
+
+    void showCamera();
 }

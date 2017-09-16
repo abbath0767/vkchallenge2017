@@ -1,10 +1,15 @@
 package com.ng.vkchallenge2017.ui.activity;
 
 import android.Manifest;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
@@ -48,6 +53,7 @@ import com.ng.vkchallenge2017.ui.view.CustomImageView;
 import com.ng.vkchallenge2017.ui.view.KeyBoardListener;
 import com.ng.vkchallenge2017.view.PostView;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -63,6 +69,8 @@ import timber.log.Timber;
 public class PostActivity extends MvpAppCompatActivity implements PostView {
 
     public static final int MY_PERMISSIONS_REQUEST_READ_STORAGE = 13;
+    public static final int REQUEST_CAMERA = 23;
+
 
     @InjectPresenter
     PostPresenter mPostPresenter;
@@ -93,6 +101,8 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
 
     private RecyclerView mPhotoRecyclerView;
     private PopupSquareAdapter mPopupSquareAdapter;
+
+    private Uri photoUri;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -373,8 +383,27 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     }
 
     @Override
+    public void showCamera() {
+        Timber.i("showCamera");
+
+        ContentValues content = new ContentValues();
+        content.put(MediaStore.Images.Media.TITLE, "new pic");
+        content.put(MediaStore.Images.Media.DESCRIPTION, "from camera");
+        photoUri = getContentResolver().insert(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, content);
+
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_CAMERA);
+        }
+    }
+
+    @Override
     public void checkPermission() {
         Timber.i("checkPermission");
+
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -408,6 +437,19 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
                     //todo show snackbar
                 }
                 return;
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        if (requestCode == REQUEST_CAMERA && resultCode == RESULT_OK) {
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(
+                        getContentResolver(), photoUri);
+                mCustomImageView.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }

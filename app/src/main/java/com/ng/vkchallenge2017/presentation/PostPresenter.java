@@ -52,10 +52,11 @@ public class PostPresenter extends MvpPresenter<PostView> {
             getViewState().disablePopup();
             getViewState().setUpContent(mSquareRepository.getSquares().get(position));
         } else {
+            Timber.i("onSquareClick %b, %d", loaded, photoPosition);
             getViewState().setUpPopup();
             if (!loaded)
                 getViewState().checkPermission();
-            else if (photoPosition != 2) {
+            else {
                 getViewState().setSelectedPhotoPosition(photoPosition);
                 getViewState().setUpPhoto(mPhotoRepository.getPhoto(photoPosition));
             }
@@ -77,6 +78,9 @@ public class PostPresenter extends MvpPresenter<PostView> {
         if (mPhotoRepository.getPhotoSquares().size() != MAX_SQUARE_COUNT || !loaded) {
             mPhotoRepository.loadPhotoFromGallery();
             loaded = true;
+
+            getViewState().setSelectedPhotoPosition(photoPosition);
+            getViewState().setUpPhoto(mPhotoRepository.getPhoto(photoPosition));
         }
     }
 
@@ -97,6 +101,10 @@ public class PostPresenter extends MvpPresenter<PostView> {
         if (position > 1) {
             photoPosition = position;
             getViewState().setUpPhoto(mPhotoRepository.getPhoto(position));
+        } else if (position == 0) {
+            getViewState().showCamera();
+        } else if (position == 1) {
+
         }
     }
 
