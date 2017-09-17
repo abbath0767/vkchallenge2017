@@ -1,7 +1,6 @@
 package com.ng.vkchallenge2017.ui.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,7 +16,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
 
 /**
@@ -49,7 +47,7 @@ public class StickerRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
 
-        ((StickerViewHolder)holder).bindView(mContext, mStickers.get(position).getPath());
+        ((StickerViewHolder)holder).bindView(mContext, mStickers.get(position).getAbsolutePath());
     }
 
     @Override

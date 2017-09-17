@@ -7,7 +7,6 @@ import com.ng.vkchallenge2017.model.sticker.Sticker;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -50,14 +49,13 @@ public class StickerRepositoryImpl implements StickerRepository {
 
             for (String path : list) {
                 mStickers.add(new Sticker(ASSET_PREFIX + STICKER_ASSET_FOLDER + DIVIDER + path));
-                Timber.i("initList. add: %s", ASSET_PREFIX + STICKER_ASSET_FOLDER + DIVIDER + path);
             }
 
             Collections.sort(mStickers, new Comparator<Sticker>() {
                 @Override
                 public int compare(final Sticker sticker, final Sticker t1) {
-                    return Integer.valueOf(sticker.getPath().split("_")[2].replace(PNG, ""))
-                            .compareTo(Integer.valueOf(t1.getPath().split("_")[2].replace(PNG, "")));
+                    return Integer.valueOf(sticker.getAbsolutePath().split("_")[2].replace(PNG, ""))
+                            .compareTo(Integer.valueOf(t1.getAbsolutePath().split("_")[2].replace(PNG, "")));
                 }
             });
 

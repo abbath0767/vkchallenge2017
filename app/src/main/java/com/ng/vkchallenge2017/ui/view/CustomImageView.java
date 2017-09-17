@@ -2,6 +2,8 @@ package com.ng.vkchallenge2017.ui.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -22,14 +24,23 @@ import com.bumptech.glide.load.DecodeFormat;
 import com.ng.vkchallenge2017.R;
 import com.ng.vkchallenge2017.Util.SpanColoredBackground;
 import com.ng.vkchallenge2017.model.photo.PhotoSquareBase;
+import com.ng.vkchallenge2017.model.sticker.Sticker;
 import com.ng.vkchallenge2017.model.text_style.TextStyle;
 import com.ng.vkchallenge2017.presentation.PostPresenter;
+import com.xiaopo.flying.sticker.BitmapStickerIcon;
+import com.xiaopo.flying.sticker.StickerView;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
+
+import static com.xiaopo.flying.sticker.BitmapStickerIcon.LEFT_TOP;
 
 /**
  * Created by nikitagusarov on 11.09.17.
@@ -45,11 +56,15 @@ public class CustomImageView extends ConstraintLayout {
     ImageView mImageViewMid;
     @BindView(R.id.image_view_bot)
     ImageView mImageViewBot;
+    @BindView(R.id.sticker_container)
+    StickerView mStickerView;
 
     private Context mContext;
 
     private LayoutInflater mInflater;
     private PostPresenter.Mode mMode = PostPresenter.Mode.POST;
+
+    private Map<BitmapStickerIcon, Matrix> mapMatrix = new HashMap<>();
 
     public CustomImageView(final Context context) {
         super(context);
@@ -76,6 +91,8 @@ public class CustomImageView extends ConstraintLayout {
         mInflater.inflate(R.layout.image_collection, this, true);
         ButterKnife.bind(this);
 
+        mStickerView.bringToFront();
+        mStickerView.requestLayout();
         mPostEditText.bringToFront();
         mPostEditText.requestLayout();
     }
@@ -224,15 +241,89 @@ public class CustomImageView extends ConstraintLayout {
 
             mPostEditText.setTextColor(ContextCompat.getColor(getContext(), textStyle.getTextColour()));
             mPostEditText.setText(span);
-//            final Spannable span = new RoundedCornersBackgroundSpan.Builder(getContext())
-//                    .setCornersRadiusRes(R.dimen.square_corner)
-//                    .setTextAlignment(RoundedCornersBackgroundSpan.ALIGN_CENTER)
-//                    .addTextPart(mPostEditText.getText().toString(), textStyle.getBackgroundColour())
-//                    .build();
-//
-//            mPostEditText.setText(span);
         }
         mPostEditText.setSelection(mPostEditText.length());
+    }
+
+    @Override
+    protected void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        Timber.i("onSizeChanged");
+
+        Timber.i("onSizeChanged. map size: %d", mapMatrix.size());
+
+        for (Map.Entry<BitmapStickerIcon, Matrix> entry: mapMatrix.entrySet()) {
+            float[] f = new float[9];
+            entry.getKey().getMatrix().getValues(f);
+            Timber.i("onStickerDragFinished, hash: %d", entry.getKey().hashCode());
+            Timber.i("onStickerDragFinished. old matrix with X:%f Y:%f", f[Matrix.MTRANS_X], f[Matrix.MTRANS_Y]);
+
+            entry.getValue().getValues(f);
+            Timber.i("onStickerDragFinished, hash: %d", entry.getKey().hashCode());
+            Timber.i("onStickerDragFinished. saved matrix with X:%f Y:%f", f[Matrix.MTRANS_X], f[Matrix.MTRANS_Y]);
+
+            BitmapStickerIcon cache = entry.getKey();
+            mStickerView.remove(entry.getKey());
+            mStickerView.addSticker(cache);
+        }
+    }
+
+    public void addSticker(final Sticker sticker) {
+
+        mStickerView.bringToFront();
+        mStickerView.requestLayout();
+        try {
+            BitmapStickerIcon icon = new BitmapStickerIcon(Drawable.createFromStream(mContext.getAssets().open(sticker.getPath()), null), LEFT_TOP);
+
+            mStickerView.addSticker(icon, com.xiaopo.flying.sticker.Sticker.Position.LEFT | com.xiaopo.flying.sticker.Sticker.Position.TOP);
+            Timber.i("addSticker hash: %d", icon.hashCode());
+            mapMatrix.put(icon, icon.getMatrix());
+            float[] f = new float[9];
+            icon.getMatrix().getValues(f);
+            Timber.i("addSticker. put matrix with X:%f Y:%f", f[Matrix.MTRANS_X], f[Matrix.MTRANS_Y]);
+            mStickerView.setOnStickerOperationListener(new StickerView.OnStickerOperationListener() {
+                @Override
+                public void onStickerAdded(@NonNull final com.xiaopo.flying.sticker.Sticker sticker) {
+
+                }
+
+                @Override
+                public void onStickerClicked(@NonNull final com.xiaopo.flying.sticker.Sticker sticker) {
+
+                }
+
+                @Override
+                public void onStickerDeleted(@NonNull final com.xiaopo.flying.sticker.Sticker sticker) {
+
+                }
+
+                @Override
+                public void onStickerDragFinished(@NonNull final com.xiaopo.flying.sticker.Sticker sticker) {
+                    float[] f = new float[9];
+                    sticker.getMatrix().getValues(f);
+                    Timber.i("onStickerDragFinished, hash: %d", sticker.hashCode());
+                    Timber.i("onStickerDragFinished. put matrix with X:%f Y:%f", f[Matrix.MTRANS_X], f[Matrix.MTRANS_Y]);
+                    mapMatrix.put((BitmapStickerIcon) sticker, sticker.getMatrix());
+                    Timber.i("onStickerDragFinished. map size: %d", mapMatrix.size());
+                }
+
+                @Override
+                public void onStickerZoomFinished(@NonNull final com.xiaopo.flying.sticker.Sticker sticker) {
+                }
+
+                @Override
+                public void onStickerFlipped(@NonNull final com.xiaopo.flying.sticker.Sticker sticker) {
+                }
+
+                @Override
+                public void onStickerDoubleTapped(@NonNull final com.xiaopo.flying.sticker.Sticker sticker) {
+
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
 

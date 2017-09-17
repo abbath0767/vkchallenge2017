@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -58,6 +59,7 @@ import com.ng.vkchallenge2017.ui.view.CustomImageView;
 import com.ng.vkchallenge2017.ui.view.KeyBoardListener;
 import com.ng.vkchallenge2017.ui.view.StickerDialog;
 import com.ng.vkchallenge2017.view.PostView;
+import com.xiaopo.flying.sticker.BitmapStickerIcon;
 import com.xiaopo.flying.sticker.StickerView;
 
 import java.io.IOException;
@@ -67,6 +69,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
+
+import static com.xiaopo.flying.sticker.BitmapStickerIcon.LEFT_TOP;
 
 
 /**
@@ -102,8 +106,6 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     BottomBar mBottomBar;
     @BindView(R.id.cover_for_popup)
     ConstraintLayout cover;
-    @BindView(R.id.sticker_container)
-    StickerView mStickerView;
 
     private InputMethodManager mInputMethodManager;
     private View popupView;
@@ -487,7 +489,7 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
 
     @Override
     public void addSticker(final Sticker sticker) {
-        Timber.i("addSticker with path: %s", sticker.getPath());
+        mCustomImageView.addSticker(sticker);
     }
 
     private void showCover(boolean isVisible) {
