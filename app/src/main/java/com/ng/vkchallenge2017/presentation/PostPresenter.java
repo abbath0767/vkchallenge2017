@@ -5,6 +5,8 @@ import com.arellomobile.mvp.MvpPresenter;
 import com.ng.vkchallenge2017.repo.PhotoRepository;
 import com.ng.vkchallenge2017.repo.SquareRepository;
 import com.ng.vkchallenge2017.repo.SquareRepositoryImpl;
+import com.ng.vkchallenge2017.repo.StickerRepositoryImpl;
+import com.ng.vkchallenge2017.repo.StickerRepository;
 import com.ng.vkchallenge2017.repo.TextStyleContainer;
 import com.ng.vkchallenge2017.repo.TextStyleContainerImpl;
 import com.ng.vkchallenge2017.view.PostView;
@@ -25,15 +27,17 @@ public class PostPresenter extends MvpPresenter<PostView> {
     private SquareRepository mSquareRepository;
     private PhotoRepository mPhotoRepository;
     private TextStyleContainer mTextStyleContainer;
+    private StickerRepository mStickersRepository;
     private Mode mMode = POST;
     private boolean loaded = false;
 
     private int photoPosition = 2;
     private int textStyleNum = 0;
 
-    public PostPresenter(PhotoRepository photoRepository) {
-        mSquareRepository = SquareRepositoryImpl.getInstance();
+    public PostPresenter(PhotoRepository photoRepository, StickerRepository stickerRepository) {
         mPhotoRepository = photoRepository;
+        mStickersRepository = stickerRepository;
+        mSquareRepository = SquareRepositoryImpl.getInstance();
         mTextStyleContainer = TextStyleContainerImpl.getInstance();
     }
 
@@ -43,6 +47,7 @@ public class PostPresenter extends MvpPresenter<PostView> {
         getViewState().setBottomBarRecycler(mSquareRepository.getSquares());
         getViewState().setAdapterData(mPhotoRepository.getPhotoSquares());
         getViewState().setTextStyle(mTextStyleContainer.getStyle(textStyleNum));
+        getViewState().initStickersDialog(mStickersRepository.getStickers());
     }
 
     public void onSquareClick(final int position) {
@@ -110,7 +115,6 @@ public class PostPresenter extends MvpPresenter<PostView> {
 
     public void onButtonLeftClick() {
         int nextStyleNum = nextStyleNum();
-        Timber.i("onButtonLeftClick : %d ", nextStyleNum);
         getViewState().setTextStyle(mTextStyleContainer.getStyle(nextStyleNum));
     }
 
@@ -123,6 +127,10 @@ public class PostPresenter extends MvpPresenter<PostView> {
             textStyleNum += 1;
             return textStyleNum;
         }
+    }
+
+    public void onButtonRightClick() {
+        getViewState().showStickerDialog();
     }
 
     public enum Mode {

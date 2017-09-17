@@ -39,5 +39,14 @@
     <dimen name="popup_square_border">84dp</dimen>
     <dimen name="popup_card_margin">4dp</dimen>
 
+    <!--stikers-->
+    <dimen name="sticker_dialog_height">384dp</dimen>
+    <dimen name="sticker_text_size">16sp</dimen>
+    <dimen name="sticker_text_height">56dp</dimen>
+    <dimen name="sticker_text_padding_left">16dp</dimen>
+    <dimen name="sticker_text_padding_vertical">18dp</dimen>
+    <dimen name="sticker_recycler_padding">8dp</dimen>
+    <dimen name="sticker_square">78dp</dimen>
+    <dimen name="sticker_margin">4dp</dimen>
 
 </resources>

@@ -33,4 +33,8 @@
     <color name="violet_square_start">#f8a6ff</color>
     <color name="violet_square_end">#6c6cd9</color>
 
+    <!--stickers-->
+    <color name="sticker_back_color">#ffffff</color>
+    <color name="sticker_text_color">#2c2d2e</color>
+
 </resources>

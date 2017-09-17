@@ -3,6 +3,7 @@ package com.ng.vkchallenge2017.ui.activity;
 import android.Manifest;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -44,14 +45,17 @@ import com.ng.vkchallenge2017.model.square.SimpleThumb;
 import com.ng.vkchallenge2017.model.square.Thumb;
 import com.ng.vkchallenge2017.model.square.ThumbAsset;
 import com.ng.vkchallenge2017.model.square.Thumbs;
+import com.ng.vkchallenge2017.model.sticker.Sticker;
 import com.ng.vkchallenge2017.model.text_style.TextStyle;
 import com.ng.vkchallenge2017.presentation.PostPresenter;
 import com.ng.vkchallenge2017.repo.PhotoRepositoryImpl;
+import com.ng.vkchallenge2017.repo.StickerRepositoryImpl;
 import com.ng.vkchallenge2017.ui.adapter.PopupSquareAdapter;
 import com.ng.vkchallenge2017.ui.view.BottomBar;
 import com.ng.vkchallenge2017.ui.adapter.BottomSquareRVAdapter;
 import com.ng.vkchallenge2017.ui.view.CustomImageView;
 import com.ng.vkchallenge2017.ui.view.KeyBoardListener;
+import com.ng.vkchallenge2017.ui.view.StickerDialog;
 import com.ng.vkchallenge2017.view.PostView;
 
 import java.io.IOException;
@@ -79,11 +83,13 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
 
     @ProvidePresenter
     public PostPresenter providePresenter() {
-        return new PostPresenter(new PhotoRepositoryImpl(this));
+        return new PostPresenter(new PhotoRepositoryImpl(this), StickerRepositoryImpl.newInstance(this));
     }
 
     @BindView(R.id.post_toolbar_left_button)
     ImageButton mImageButtonLeft;
+    @BindView(R.id.post_toolbar_right_button)
+    ImageButton mImageButtonRight;
     @BindView(R.id.post_container)
     ConstraintLayout mParentLayout;
     @BindView(R.id.post_tab_layout)
@@ -100,11 +106,14 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     private PopupWindow mPopupWindow;
     private int keyboardHeight;
     private boolean isKeyBoardVisible;
+    private boolean keyboardNeedVisible = false;
 
     private RecyclerView mPhotoRecyclerView;
     private PopupSquareAdapter mPopupSquareAdapter;
 
     private Uri photoUri;
+
+    private StickerDialog mStickerDialog;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -119,6 +128,13 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
             @Override
             public void onClick(final View view) {
                 mPostPresenter.onButtonLeftClick();
+            }
+        });
+
+        mImageButtonRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                mPostPresenter.onButtonRightClick();
             }
         });
 
@@ -225,11 +241,22 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     }
 
     private void forceShowKeyboardIfNeed() {
+        Timber.i("forceShowKeyboardIfNeed : %b", isKeyBoardVisible);
         if (!isKeyBoardVisible) {
             isKeyBoardVisible = true;
             mInputMethodManager.toggleSoftInputFromWindow(
                     mParentLayout.getApplicationWindowToken(),
                     InputMethodManager.SHOW_FORCED, 0);
+        }
+    }
+
+    private void hideKeyboardIfNeed() {
+        Timber.i("hideKeyboardIfNeed : %b", isKeyBoardVisible);
+        if (isKeyBoardVisible) {
+            isKeyBoardVisible = false;
+            mInputMethodManager.hideSoftInputFromWindow(
+                    mParentLayout.getApplicationWindowToken(),
+                    InputMethodManager.HIDE_IMPLICIT_ONLY);
         }
     }
 
@@ -331,7 +358,7 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     }
 
     private void enablePopup() {
-        initRecyclerView();
+        initPopupRecyclerView();
 
         mPopupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT,
                 (int) keyboardHeight, false);
@@ -358,10 +385,10 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         });
     }
 
-    private void initRecyclerView() {
+    private void initPopupRecyclerView() {
         mPhotoRecyclerView = popupView.findViewById(R.id.popup_photo_recycler);
 
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 2, OrientationHelper.HORIZONTAL, false);
+        final GridLayoutManager layoutManager = new GridLayoutManager(this, 2, OrientationHelper.HORIZONTAL, false);
         mPhotoRecyclerView.setLayoutManager(layoutManager);
         mPopupSquareAdapter = new PopupSquareAdapter(this);
         mPhotoRecyclerView.setAdapter(mPopupSquareAdapter);
@@ -417,6 +444,44 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
                 android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         getIntent.setType("image/*");
         startActivityForResult(getIntent, REQUEST_GALLERY);
+    }
+
+    @Override
+    public void initStickersDialog(final List<Sticker> stickers) {
+        mStickerDialog = new StickerDialog(this, R.style.StickerDialogSheet, stickers);
+        mStickerDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(final DialogInterface dialogInterface) {
+                Timber.i("onCancel: visible %b need %b", isKeyBoardVisible, keyboardNeedVisible);
+                if (keyboardNeedVisible) {
+                    forceShowKeyboardIfNeed();
+                    showCover(false);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void showStickerDialog() {
+        keyboardNeedVisible = isKeyBoardVisible;
+        showCover(isKeyBoardVisible);
+        hideKeyboardIfNeed();
+        mStickerDialog.show();
+    }
+
+    private void showCover(boolean isVisible) {
+        Timber.i("showCover: %b", isVisible);
+        if (isVisible) {
+            ConstraintSet set = new ConstraintSet();
+            set.clone(mParentLayout);
+            set.setVisibility(cover.getId(), ConstraintSet.VISIBLE);
+            set.applyTo(mParentLayout);
+        } else {
+            ConstraintSet set = new ConstraintSet();
+            set.clone(mParentLayout);
+            set.setVisibility(cover.getId(), ConstraintSet.GONE);
+            set.applyTo(mParentLayout);
+        }
     }
 
     @Override

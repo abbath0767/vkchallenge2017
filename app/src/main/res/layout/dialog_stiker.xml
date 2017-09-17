@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/sticker_background"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/sticker_dialog_height">
+
+    <TextView
+        android:id="@+id/sticker_text"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/sticker_text_height"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/stickers_text_popup"
+        android:textColor="@color/sticker_text_color"
+        android:textSize="@dimen/sticker_text_size"
+        android:gravity="left"
+        android:paddingLeft="@dimen/sticker_text_padding_left"
+        android:paddingTop="@dimen/sticker_text_padding_vertical"
+        android:paddingBottom="@dimen/sticker_text_padding_vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/stickers_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:paddingTop="@dimen/sticker_recycler_padding"
+        android:paddingRight="@dimen/sticker_recycler_padding"
+        android:paddingLeft="@dimen/sticker_recycler_padding"
+        app:layout_constraintTop_toBottomOf="@id/sticker_text"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+    </android.support.v7.widget.RecyclerView>
+</android.support.constraint.ConstraintLayout>
