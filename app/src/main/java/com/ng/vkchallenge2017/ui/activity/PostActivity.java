@@ -51,12 +51,14 @@ import com.ng.vkchallenge2017.presentation.PostPresenter;
 import com.ng.vkchallenge2017.repo.PhotoRepositoryImpl;
 import com.ng.vkchallenge2017.repo.StickerRepositoryImpl;
 import com.ng.vkchallenge2017.ui.adapter.PopupSquareAdapter;
+import com.ng.vkchallenge2017.ui.adapter.StickerRVAdapter;
 import com.ng.vkchallenge2017.ui.view.BottomBar;
 import com.ng.vkchallenge2017.ui.adapter.BottomSquareRVAdapter;
 import com.ng.vkchallenge2017.ui.view.CustomImageView;
 import com.ng.vkchallenge2017.ui.view.KeyBoardListener;
 import com.ng.vkchallenge2017.ui.view.StickerDialog;
 import com.ng.vkchallenge2017.view.PostView;
+import com.xiaopo.flying.sticker.StickerView;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -100,6 +102,8 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     BottomBar mBottomBar;
     @BindView(R.id.cover_for_popup)
     ConstraintLayout cover;
+    @BindView(R.id.sticker_container)
+    StickerView mStickerView;
 
     private InputMethodManager mInputMethodManager;
     private View popupView;
@@ -416,6 +420,7 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         mBottomBar.setSentButtonEnabled(isEnabled);
     }
 
+    //todo DELETE BACKGROUND IF NEED
     @Override
     public void setTextStyle(final TextStyle style) {
         mCustomImageView.setTextStyle(style);
@@ -448,7 +453,13 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
 
     @Override
     public void initStickersDialog(final List<Sticker> stickers) {
-        mStickerDialog = new StickerDialog(this, R.style.StickerDialogSheet, stickers);
+        mStickerDialog = new StickerDialog(this, R.style.StickerDialogSheet, stickers, new StickerRVAdapter.StickerClickListener() {
+            @Override
+            public void onStickerClick(final int position) {
+                mPostPresenter.onStickerClick(position);
+            }
+        });
+
         mStickerDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(final DialogInterface dialogInterface) {
@@ -467,6 +478,16 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         showCover(isKeyBoardVisible);
         hideKeyboardIfNeed();
         mStickerDialog.show();
+    }
+
+    @Override
+    public void closeStickerDialog() {
+        mStickerDialog.cancel();
+    }
+
+    @Override
+    public void addSticker(final Sticker sticker) {
+        Timber.i("addSticker with path: %s", sticker.getPath());
     }
 
     private void showCover(boolean isVisible) {

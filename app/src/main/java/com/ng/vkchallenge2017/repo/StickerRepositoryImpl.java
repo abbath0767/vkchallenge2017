@@ -7,7 +7,12 @@ import com.ng.vkchallenge2017.model.sticker.Sticker;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+
+import timber.log.Timber;
 
 /**
  * Created by nikitagusarov on 17.09.17.
@@ -18,6 +23,7 @@ public class StickerRepositoryImpl implements StickerRepository {
     private static final String STICKER_ASSET_FOLDER = "stickers";
     private static final String DIVIDER = "/";
     private static final String ASSET_PREFIX = "file:///android_asset/";
+    private static final String PNG = ".png";
 
     private static StickerRepository instance;
 
@@ -40,11 +46,21 @@ public class StickerRepositoryImpl implements StickerRepository {
 
     private void initList() {
         try {
-            String[] list =  mContext.getAssets().list(STICKER_ASSET_FOLDER);
+            String[] list = mContext.getAssets().list(STICKER_ASSET_FOLDER);
 
-            for (String path: list) {
+            for (String path : list) {
                 mStickers.add(new Sticker(ASSET_PREFIX + STICKER_ASSET_FOLDER + DIVIDER + path));
+                Timber.i("initList. add: %s", ASSET_PREFIX + STICKER_ASSET_FOLDER + DIVIDER + path);
             }
+
+            Collections.sort(mStickers, new Comparator<Sticker>() {
+                @Override
+                public int compare(final Sticker sticker, final Sticker t1) {
+                    return Integer.valueOf(sticker.getPath().split("_")[2].replace(PNG, ""))
+                            .compareTo(Integer.valueOf(t1.getPath().split("_")[2].replace(PNG, "")));
+                }
+            });
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -53,5 +69,10 @@ public class StickerRepositoryImpl implements StickerRepository {
     @Override
     public List<Sticker> getStickers() {
         return mStickers;
+    }
+
+    @Override
+    public Sticker getSticker(final int position) {
+        return mStickers.get(position);
     }
 }

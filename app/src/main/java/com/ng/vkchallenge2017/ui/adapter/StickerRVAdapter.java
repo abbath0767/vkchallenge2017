@@ -28,11 +28,15 @@ public class StickerRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private Context mContext;
     private List<Sticker> mStickers;
+    private StickerClickListener mStickerClickListener;
 
     public StickerRVAdapter(@NonNull final Context context, @NonNull final List<Sticker> stickers) {
         mContext = context;
         mStickers = stickers;
-        Timber.i("StickerRVAdapter. stickers :%d", stickers.size());
+    }
+
+    public void setStickerClickListener(@NonNull final StickerClickListener listener) {
+        mStickerClickListener = listener;
     }
 
     @Override
@@ -53,7 +57,11 @@ public class StickerRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return mStickers.size();
     }
 
-    public static class StickerViewHolder extends RecyclerView.ViewHolder {
+    public interface StickerClickListener{
+        void onStickerClick(int position);
+    }
+
+    public class StickerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         @BindView(R.id.sticker_image)
         ImageView mImageView;
 
@@ -61,6 +69,13 @@ public class StickerRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             super(itemView);
 
             ButterKnife.bind(this, itemView);
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(final View view) {
+            mStickerClickListener.onStickerClick(getLayoutPosition());
         }
 
         public void bindView(Context context, String path) {

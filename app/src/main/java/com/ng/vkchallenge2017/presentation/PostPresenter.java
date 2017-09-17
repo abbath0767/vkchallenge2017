@@ -133,6 +133,12 @@ public class PostPresenter extends MvpPresenter<PostView> {
         getViewState().showStickerDialog();
     }
 
+    public void onStickerClick(final int position) {
+        Timber.i("onStickerClick: pos: %d", position);
+        getViewState().closeStickerDialog();
+        getViewState().addSticker(mStickersRepository.getSticker(position));
+    }
+
     public enum Mode {
         POST, HISTORY
     }

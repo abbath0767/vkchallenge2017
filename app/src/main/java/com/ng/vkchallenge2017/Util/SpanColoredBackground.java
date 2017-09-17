@@ -37,7 +37,7 @@ public class SpanColoredBackground implements LineBackgroundSpan {
         mBgRect.set(left + crop - mPadding,
                 top - (lnum == 0 ? mPadding / 2 : - (mPadding / 2)),
                 right - crop + mPadding,
-                bottom + mPadding - 2);
+                bottom + mPadding/2);
         p.setColor(mBackgroundColor);
         c.drawRoundRect(mBgRect, mCornerRadius, mCornerRadius, p);
         p.setColor(paintColor);

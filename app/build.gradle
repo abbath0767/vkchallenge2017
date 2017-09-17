@@ -25,6 +25,7 @@ ext {
     butterknife = '8.5.1'
     leak_canary = '1.5.1'
     glide = '3.8.0'
+    sticker = '1.6.0'
 }
 
 dependencies {
@@ -51,6 +52,8 @@ dependencies {
     compile "com.squareup.leakcanary:leakcanary-android:$leak_canary"
 
     compile "com.github.bumptech.glide:glide:$glide"
+
+    compile "com.flying.xiaopo:sticker:$sticker"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'

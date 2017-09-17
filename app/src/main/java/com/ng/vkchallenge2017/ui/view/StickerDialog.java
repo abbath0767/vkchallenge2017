@@ -34,10 +34,14 @@ public class StickerDialog extends Dialog {
 
     private StickerRVAdapter mStickerRVAdapter;
 
-    public StickerDialog(@NonNull final Context context, @NonNull final int themeResId, @NonNull final List<Sticker> stickers) {
+    public StickerDialog(@NonNull final Context context,
+                         @NonNull final int themeResId,
+                         @NonNull final List<Sticker> stickers,
+                         @NonNull final StickerRVAdapter.StickerClickListener listener) {
         this(context, themeResId);
 
         mStickerRVAdapter = new StickerRVAdapter(getContext(), stickers);
+        mStickerRVAdapter.setStickerClickListener(listener);
         initRecycler();
     }
 

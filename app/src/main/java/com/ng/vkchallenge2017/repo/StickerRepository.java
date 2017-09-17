@@ -10,4 +10,6 @@ import java.util.List;
 
 public interface StickerRepository {
     List<Sticker> getStickers();
+
+    Sticker getSticker(int position);
 }
