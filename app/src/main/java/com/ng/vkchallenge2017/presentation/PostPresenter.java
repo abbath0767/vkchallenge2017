@@ -139,6 +139,10 @@ public class PostPresenter extends MvpPresenter<PostView> {
         getViewState().addSticker(mStickersRepository.getSticker(position));
     }
 
+    public void sendClick() {
+        getViewState().sendImageToWall();
+    }
+
     public enum Mode {
         POST, HISTORY
     }

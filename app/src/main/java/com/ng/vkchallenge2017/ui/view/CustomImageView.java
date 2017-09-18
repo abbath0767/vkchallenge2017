@@ -138,13 +138,12 @@ public class CustomImageView extends RelativeLayout {
         } else {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-            if (rest > exceptedHeight) {
-            } else {
-                int spec = MeasureSpec.makeMeasureSpec(rest, MeasureSpec.EXACTLY);
+            if (rest < exceptedHeight) {
+//                int spec = MeasureSpec.makeMeasureSpec(rest, MeasureSpec.EXACTLY);
+                int spec = MeasureSpec.makeMeasureSpec(rest, MeasureSpec.AT_MOST);
                 setMeasuredDimension(exceptedHeight, rest);
                 super.onMeasure(widthMeasureSpec, spec);
             }
-
         }
     }
 

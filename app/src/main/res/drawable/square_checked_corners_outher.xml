@@ -7,7 +7,9 @@
         android:width="@dimen/square_corner_outher"
         android:color="@color/post_tab_selected_text"/>
 
-
-    <corners android:bottomRightRadius="4dp" android:bottomLeftRadius="4dp"
-             android:topLeftRadius="4dp" android:topRightRadius="4dp"/>
+    <corners
+        android:bottomLeftRadius="@dimen/square_corner"
+        android:bottomRightRadius="@dimen/square_corner"
+        android:topLeftRadius="@dimen/square_corner"
+        android:topRightRadius="@dimen/square_corner"/>
 </shape>

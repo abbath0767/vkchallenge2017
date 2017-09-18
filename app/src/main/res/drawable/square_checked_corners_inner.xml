@@ -6,4 +6,10 @@
     <stroke
         android:width="@dimen/square_corner"
         android:color="@android:color/white"/>
+
+    <corners
+        android:bottomLeftRadius="@dimen/square_corner"
+        android:bottomRightRadius="@dimen/square_corner"
+        android:topLeftRadius="@dimen/square_corner"
+        android:topRightRadius="@dimen/square_corner"/>
 </shape>

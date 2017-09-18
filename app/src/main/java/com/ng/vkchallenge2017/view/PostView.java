@@ -51,4 +51,6 @@ public interface PostView extends MvpView {
     void closeStickerDialog();
 
     void addSticker(Sticker sticker);
+
+    void sendImageToWall();
 }

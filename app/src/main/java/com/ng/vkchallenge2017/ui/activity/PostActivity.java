@@ -58,6 +58,14 @@ import com.ng.vkchallenge2017.ui.view.CustomImageView;
 import com.ng.vkchallenge2017.ui.view.KeyBoardListener;
 import com.ng.vkchallenge2017.ui.view.StickerDialog;
 import com.ng.vkchallenge2017.view.PostView;
+import com.vk.sdk.VKAccessToken;
+import com.vk.sdk.VKSdk;
+import com.vk.sdk.api.VKApi;
+import com.vk.sdk.api.VKError;
+import com.vk.sdk.api.VKRequest;
+import com.vk.sdk.api.VKResponse;
+import com.vk.sdk.api.photo.VKImageParameters;
+import com.vk.sdk.api.photo.VKUploadImage;
 import com.xiaopo.flying.sticker.BitmapStickerIcon;
 import com.xiaopo.flying.sticker.StickerView;
 
@@ -105,6 +113,8 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     BottomBar mBottomBar;
     @BindView(R.id.cover_for_popup)
     ConstraintLayout cover;
+    @BindView(R.id.top_background)
+    View mCoverBackground;
 
 
     private InputMethodManager mInputMethodManager;
@@ -130,10 +140,7 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         moveStripToTop();
         disableClickAnimation();
 
-        mTabLayout.bringToFront();
-        mTabLayout.requestLayout();
-        mBottomBar.bringToFront();
-        mBottomBar.requestLayout();
+        bringToFrontViews();
 
         mImageButtonLeft.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,7 +166,8 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         mBottomBar.setSentButtonClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                Toast.makeText(PostActivity.this, "send click", Toast.LENGTH_LONG).show();
+                hideKeyboardIfNeed();
+                mPostPresenter.sendClick();
             }
         });
 
@@ -209,6 +217,19 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         });
 
         initInputManager();
+    }
+
+    private void bringToFrontViews() {
+        mCoverBackground.bringToFront();
+        mCoverBackground.requestLayout();
+        mImageButtonLeft.bringToFront();
+        mImageButtonLeft.requestLayout();
+        mImageButtonRight.bringToFront();
+        mImageButtonRight.requestLayout();
+        mTabLayout.bringToFront();
+        mTabLayout.requestLayout();
+        mBottomBar.bringToFront();
+        mBottomBar.requestLayout();
     }
 
     private void initInputManager() {
@@ -581,5 +602,45 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
                 break;
             }
         }
+    }
+
+    //todo need test
+    @Override
+    public void sendImageToWall() {
+
+        VKUploadImage image = new VKUploadImage( getBitmapFromImageView(), VKImageParameters.jpgImage(1f));
+        VKRequest request = VKApi.uploadWallPhotoRequest(image, Integer.valueOf(VKAccessToken.currentToken().userId), 0);
+
+        request.executeWithListener(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(final VKResponse response) {
+                Timber.i("onComplete");
+            }
+
+            @Override
+            public void attemptFailed(final VKRequest request, final int attemptNumber, final int totalAttempts) {
+                Timber.i("attemptFailed");
+            }
+
+            @Override
+            public void onError(final VKError error) {
+                Timber.i("onError %s", error.toString());
+            }
+        });
+    }
+
+
+    public Bitmap getBitmapFromImageView() {
+        mCustomImageView.setDrawingCacheEnabled(true);
+        mCustomImageView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        mCustomImageView.buildDrawingCache();
+
+        if (mCustomImageView.getDrawingCache() == null) return  null;
+
+        Bitmap screen = Bitmap.createBitmap(mCustomImageView.getDrawingCache());
+        mCustomImageView.setDrawingCacheEnabled(false);
+        mCustomImageView.destroyDrawingCache();
+
+        return screen;
     }
 }
