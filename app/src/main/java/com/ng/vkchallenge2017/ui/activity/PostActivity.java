@@ -59,11 +59,18 @@ import com.ng.vkchallenge2017.ui.view.KeyBoardListener;
 import com.ng.vkchallenge2017.ui.view.StickerDialog;
 import com.ng.vkchallenge2017.view.PostView;
 import com.vk.sdk.VKAccessToken;
+import com.vk.sdk.VKAccessTokenTracker;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKApi;
+import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
+import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
+import com.vk.sdk.api.model.VKApiPhoto;
+import com.vk.sdk.api.model.VKAttachments;
+import com.vk.sdk.api.model.VKPhotoArray;
+import com.vk.sdk.api.model.VKWallPostResult;
 import com.vk.sdk.api.photo.VKImageParameters;
 import com.vk.sdk.api.photo.VKUploadImage;
 import com.xiaopo.flying.sticker.BitmapStickerIcon;
@@ -122,7 +129,7 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     private PopupWindow mPopupWindow;
     private int keyboardHeight;
     private boolean isKeyBoardVisible;
-    private boolean keyboardNeedVisible = false;
+//    private boolean keyboardNeedVisible = false;
 
     private RecyclerView mPhotoRecyclerView;
     private PopupSquareAdapter mPopupSquareAdapter;
@@ -448,7 +455,6 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         mBottomBar.setSentButtonEnabled(isEnabled);
     }
 
-    //todo DELETE BACKGROUND IF NEED
     @Override
     public void setTextStyle(final TextStyle style) {
         mCustomImageView.setTextStyle(style);
@@ -491,20 +497,20 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         mStickerDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(final DialogInterface dialogInterface) {
-                Timber.i("onCancel: visible %b need %b", isKeyBoardVisible, keyboardNeedVisible);
-                if (keyboardNeedVisible) {
-                    forceShowKeyboardIfNeed();
-                    showCover(false);
-                }
+//                Timber.i("onCancel: visible %b need %b", isKeyBoardVisible, keyboardNeedVisible);
+//                if (keyboardNeedVisible) {
+//                    forceShowKeyboardIfNeed();
+//                    showCover(false);
+//                }
             }
         });
     }
 
     @Override
     public void showStickerDialog() {
-        keyboardNeedVisible = isKeyBoardVisible;
-        showCover(isKeyBoardVisible);
-        hideKeyboardIfNeed();
+//        keyboardNeedVisible = isKeyBoardVisible;
+//        showCover(isKeyBoardVisible);
+//        hideKeyboardIfNeed();
         mStickerDialog.show();
     }
 
@@ -513,28 +519,26 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         mStickerDialog.cancel();
     }
 
-
-
     @Override
     public void addSticker(final Sticker sticker) {
         Timber.i("addSticker");
         mCustomImageView.setSticker(sticker);
     }
 
-    private void showCover(boolean isVisible) {
-        Timber.i("showCover: %b", isVisible);
-        if (isVisible) {
-            ConstraintSet set = new ConstraintSet();
-            set.clone(mParentLayout);
-            set.setVisibility(cover.getId(), ConstraintSet.VISIBLE);
-            set.applyTo(mParentLayout);
-        } else {
-            ConstraintSet set = new ConstraintSet();
-            set.clone(mParentLayout);
-            set.setVisibility(cover.getId(), ConstraintSet.GONE);
-            set.applyTo(mParentLayout);
-        }
-    }
+//    private void showCover(boolean isVisible) {
+//        Timber.i("showCover: %b", isVisible);
+//        if (isVisible) {
+//            ConstraintSet set = new ConstraintSet();
+//            set.clone(mParentLayout);
+//            set.setVisibility(cover.getId(), ConstraintSet.VISIBLE);
+//            set.applyTo(mParentLayout);
+//        } else {
+//            ConstraintSet set = new ConstraintSet();
+//            set.clone(mParentLayout);
+//            set.setVisibility(cover.getId(), ConstraintSet.GONE);
+//            set.applyTo(mParentLayout);
+//        }
+//    }
 
     @Override
     public void checkPermission() {
@@ -604,38 +608,67 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         }
     }
 
-    //todo need test
+    //todo add screen!
     @Override
     public void sendImageToWall() {
 
-        VKUploadImage image = new VKUploadImage( getBitmapFromImageView(), VKImageParameters.jpgImage(1f));
-        VKRequest request = VKApi.uploadWallPhotoRequest(image, Integer.valueOf(VKAccessToken.currentToken().userId), 0);
+        Timber.i("sendImageToWall userId %s", getMyId());
+
+        VKUploadImage image = new VKUploadImage(getBitmapFromImageView(), VKImageParameters.jpgImage(1f));
+        VKRequest request = VKApi.uploadWallPhotoRequest(image, getMyId(), 0);
 
         request.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(final VKResponse response) {
                 Timber.i("onComplete");
+                VKApiPhoto photoModel = ((VKPhotoArray) response.parsedModel).get(0);
+                makePost(new VKAttachments(photoModel), "", getMyId());
             }
 
             @Override
-            public void attemptFailed(final VKRequest request, final int attemptNumber, final int totalAttempts) {
+            public void attemptFailed(final VKRequest request, final int attemptNumber,
+                                      final int totalAttempts) {
                 Timber.i("attemptFailed");
             }
 
             @Override
             public void onError(final VKError error) {
-                Timber.i("onError %s", error.toString());
+                Timber.i("request onError %s", error.toString());
             }
         });
     }
 
+    int getMyId() {
+        final VKAccessToken vkAccessToken = VKAccessToken.currentToken();
+        return vkAccessToken != null ? Integer.parseInt(vkAccessToken.userId) : 0;
+    }
+
+    void makePost(VKAttachments att, String msg, final int ownerId) {
+        VKParameters parameters = new VKParameters();
+        parameters.put(VKApiConst.OWNER_ID, String.valueOf(ownerId));
+        parameters.put(VKApiConst.ATTACHMENTS, att);
+        parameters.put(VKApiConst.MESSAGE, msg);
+        VKRequest post = VKApi.wall().post(parameters);
+        post.setModelClass(VKWallPostResult.class);
+        post.executeWithListener(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                Timber.i("onComplete %s", response);
+            }
+
+            @Override
+            public void onError(VKError error) {
+                Timber.i(" make post onError %s", error);
+            }
+        });
+    }
 
     public Bitmap getBitmapFromImageView() {
         mCustomImageView.setDrawingCacheEnabled(true);
         mCustomImageView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         mCustomImageView.buildDrawingCache();
 
-        if (mCustomImageView.getDrawingCache() == null) return  null;
+        if (mCustomImageView.getDrawingCache() == null) return null;
 
         Bitmap screen = Bitmap.createBitmap(mCustomImageView.getDrawingCache());
         mCustomImageView.setDrawingCacheEnabled(false);

@@ -30,10 +30,10 @@ public class TextStyleContainerImpl implements TextStyleContainer {
     }
 
     private void init() {
-        mTextStyles.add(new TextStyle(android.R.color.transparent, R.color.black_text));
-        mTextStyles.add(new TextStyle(android.R.color.transparent, R.color.white_text));
-        mTextStyles.add(new TextStyle(R.color.white_text, R.color.black_text));
-        mTextStyles.add(new TextStyle(R.color.white_text_background, R.color.white_text));
+        mTextStyles.add(new TextStyle(android.R.color.transparent, R.color.black_text, R.drawable.cursor_color_first));
+        mTextStyles.add(new TextStyle(android.R.color.transparent, R.color.white_text, R.drawable.cursor_color_second));
+        mTextStyles.add(new TextStyle(R.color.white_text, R.color.black_text, R.drawable.cursor_color_first));
+        mTextStyles.add(new TextStyle(R.color.white_text_background, R.color.white_text, R.drawable.cursor_color_second));
     }
 
     @Override

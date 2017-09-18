@@ -26,6 +26,7 @@
     <dimen name="post_button_send_width">111dp</dimen>
     <dimen name="tab_layout_horizontal_margin">92dp</dimen>
     <dimen name="bottom_bar_post_button_text_size">13sp</dimen>
+    <dimen name="cursor_width">2dp</dimen>
 
     <!--default-->
     <dimen name="button_default_padding">4dp</dimen>
@@ -48,5 +49,6 @@
     <dimen name="sticker_recycler_padding">8dp</dimen>
     <dimen name="sticker_square">78dp</dimen>
     <dimen name="sticker_margin">4dp</dimen>
+
 
 </resources>

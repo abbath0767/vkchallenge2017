@@ -4,8 +4,7 @@
         >
         <shape
                android:shape="rectangle">
-            <!--//todo change for correct colour!-->
-            <solid android:color="@color/post_tab_not_selected_text"/>
+            <solid android:color="@color/button_sent_enable"/>
             <corners android:radius="@dimen/button_login_radius"/>
 
         </shape>

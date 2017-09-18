@@ -17,6 +17,7 @@ import com.ng.vkchallenge2017.presentation.MainPresenter;
 import com.ng.vkchallenge2017.view.MainView;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
+import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.util.VKUtil;
@@ -61,7 +62,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
 
     @Override
     public void makeLoginCall() {
-        VKSdk.login(this);
+        VKSdk.login(this, VKScope.WALL, VKScope.PHOTOS);
     }
 
     //todo ADD ERORR HANDLING!

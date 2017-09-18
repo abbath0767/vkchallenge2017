@@ -9,10 +9,12 @@ import android.support.annotation.NonNull;
 public class TextStyle {
     @NonNull final int backgroundColour;
     @NonNull final int textColour;
+    @NonNull final int cursorColour;
 
-    public TextStyle(@NonNull final int background, @NonNull final int textColour) {
+    public TextStyle(@NonNull final int background, @NonNull final int textColour, @NonNull final int cursorColour) {
         this.backgroundColour = background;
         this.textColour = textColour;
+        this.cursorColour = cursorColour;
     }
 
     @NonNull
@@ -23,5 +25,10 @@ public class TextStyle {
     @NonNull
     public int getTextColour() {
         return textColour;
+    }
+
+    @NonNull
+    public int getCursorColour() {
+        return cursorColour;
     }
 }

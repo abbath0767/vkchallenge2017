@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
@@ -13,13 +14,18 @@ import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.style.BackgroundColorSpan;
+import android.text.style.CharacterStyle;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
@@ -33,6 +39,7 @@ import com.xiaopo.flying.sticker.BitmapStickerIcon;
 import com.xiaopo.flying.sticker.StickerView;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -239,25 +246,33 @@ public class CustomImageView extends RelativeLayout {
 
     public void setTextStyle(final TextStyle textStyle) {
         Timber.i("setTextStyle %d %d", textStyle.getBackgroundColour(), textStyle.getTextColour());
-        if (textStyle.getBackgroundColour() == android.R.color.transparent) {
-            mPostEditText.setTextColor(ContextCompat.getColor(getContext(), textStyle.getTextColour()));
-        } else {
+        mPostEditText.setTextColor(ContextCompat.getColor(getContext(), textStyle.getTextColour()));
 
-            String text = mPostEditText.getText().toString();
+        String text = mPostEditText.getText().toString();
 
-            Spannable span = new SpannableString(text);
-            span.setSpan(
-                    new SpanColoredBackground(
-                            ContextCompat.getColor(mContext, textStyle.getBackgroundColour()),
-                            (int) getResources().getDimension(R.dimen.square_corner),
-                            (int) getResources().getDimension(R.dimen.square_corner)),
-                    0,
-                    text.length(),
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        Spannable span = new SpannableString(text);
+        span.setSpan(
+                new SpanColoredBackground(
+                        ContextCompat.getColor(mContext, textStyle.getBackgroundColour()),
+                        (int) getResources().getDimension(R.dimen.square_corner),
+                        (int) getResources().getDimension(R.dimen.square_corner)),
+                0,
+                text.length(),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-            mPostEditText.setTextColor(ContextCompat.getColor(getContext(), textStyle.getTextColour()));
-            mPostEditText.setText(span);
+        mPostEditText.setTextColor(ContextCompat.getColor(getContext(), textStyle.getTextColour()));
+        mPostEditText.setText(span);
+
+        try {
+            Field field = TextView.class.getDeclaredField("mCursorDrawableRes");
+            field.setAccessible(true);
+            field.set(mPostEditText, textStyle.getCursorColour());
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
         }
+
         mPostEditText.setSelection(mPostEditText.length());
     }
 
@@ -266,7 +281,7 @@ public class CustomImageView extends RelativeLayout {
         super.onLayout(changed, l, t, r, b);
 
         Timber.i("onLayout, size: %d", cash.size());
-        for (Map.Entry<BitmapStickerIcon, Matrix> entry: cash.entrySet()) {
+        for (Map.Entry<BitmapStickerIcon, Matrix> entry : cash.entrySet()) {
             entry.getKey().setMatrix(entry.getValue());
 
             float[] f = new float[9];
@@ -290,34 +305,45 @@ public class CustomImageView extends RelativeLayout {
             cachedSticker = icon;
 
             mStickerView.addSticker(icon);
+            mStickerView.setOnTouchListener(new OnTouchListener() {
+                @Override
+                public boolean onTouch(final View view, final MotionEvent motionEvent) {
+                    Timber.i("onTouch %s", motionEvent.toString());
+                    return false;
+                }
+            });
             mStickerView.setOnStickerOperationListener(new StickerView.OnStickerOperationListener() {
                 @Override
                 public void onStickerAdded(@NonNull final com.xiaopo.flying.sticker.Sticker sticker) {
-
+                    Timber.i("onStickerAdded");
                 }
 
                 @Override
                 public void onStickerClicked(@NonNull final com.xiaopo.flying.sticker.Sticker sticker) {
-
+                    Timber.i("onStickerClicked");
                 }
 
                 @Override
                 public void onStickerDeleted(@NonNull final com.xiaopo.flying.sticker.Sticker sticker) {
+                    Timber.i("onStickerDeleted");
                     cash.remove((BitmapStickerIcon) sticker);
                 }
 
                 @Override
                 public void onStickerDragFinished(@NonNull final com.xiaopo.flying.sticker.Sticker sticker) {
+                    Timber.i("onStickerDragFinished");
                     float[] values = new float[9];
                     Matrix old = sticker.getMatrix();
                     old.getValues(values);
                     Matrix cached = new Matrix();
                     cached.setValues(values);
+                    Timber.i("onStickerDragFinished X %f Y %f", values[Matrix.MTRANS_X], values[Matrix.MTRANS_Y]);
                     cash.put((BitmapStickerIcon) sticker, cached);
                 }
 
                 @Override
                 public void onStickerZoomFinished(@NonNull final com.xiaopo.flying.sticker.Sticker sticker) {
+                    Timber.i("onStickerZoomFinished");
                     float[] values = new float[9];
                     Matrix old = sticker.getMatrix();
                     old.getValues(values);
@@ -328,6 +354,7 @@ public class CustomImageView extends RelativeLayout {
 
                 @Override
                 public void onStickerFlipped(@NonNull final com.xiaopo.flying.sticker.Sticker sticker) {
+                    Timber.i("onStickerFlipped");
                     float[] values = new float[9];
                     Matrix old = sticker.getMatrix();
                     old.getValues(values);

@@ -21,7 +21,6 @@
             android:layout_height="match_parent"
             />
 
-        <!--remove elevation!!-->
         <EditText
             android:id="@+id/post_edit_text"
             android:layout_width="wrap_content"
@@ -34,6 +33,7 @@
             android:inputType="text|textMultiLine|textCapSentences|textNoSuggestions"
             android:textSize="@dimen/post_et_text_size"
             android:textStyle="bold"
+            android:padding="@dimen/text_corner"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
