@@ -167,6 +167,7 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
             @Override
             public void onSquareClick(final int position) {
                 mPostPresenter.onSquareClick(position);
+                mBottomBar.scrollTo(position);
             }
         });
 

@@ -1,12 +1,18 @@
 package com.ng.vkchallenge2017.ui.view;
 
 import android.content.Context;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSmoothScroller;
+import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SnapHelper;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 
@@ -18,6 +24,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 /**
  * Created by nikitagusarov on 06.09.17.
@@ -57,15 +64,31 @@ public class BottomBar extends ConstraintLayout {
         mSentButton.setEnabled(false);
 
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false) {
+            @Override
+            public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
+                LinearSmoothScroller smoothScroller = new LinearSmoothScroller(getContext()) {
+
+                    private static final float SPEED = 300f;// Change this value (default=25f)
+
+                    @Override
+                    protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
+                        return SPEED / displayMetrics.densityDpi;
+                    }
+
+                };
+                smoothScroller.setTargetPosition(position);
+                startSmoothScroll(smoothScroller);
+            }
+        };
+        mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.getRecycledViewPool().setMaxRecycledViews(0, 0);
         mRVAdapter = new BottomSquareRVAdapter(getContext());
         mRecyclerView.setAdapter(mRVAdapter);
-    }
 
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
+        final SnapHelper snapHelper = new LinearSnapHelper();
+        snapHelper.attachToRecyclerView(mRecyclerView);
+        mRecyclerView.setOnFlingListener(snapHelper);
     }
 
     public void setSquares(final List<BottomSquareBase> squares) {
@@ -82,5 +105,32 @@ public class BottomBar extends ConstraintLayout {
 
     public void setSentButtonClickListener(final OnClickListener sentButtonClickListener) {
         mSentButton.setOnClickListener(sentButtonClickListener);
+    }
+
+    public void scrollTo(final int position) {
+        LinearLayoutManager layoutManager = ((LinearLayoutManager) mRecyclerView.getLayoutManager());
+        int last = layoutManager.findLastVisibleItemPosition();
+        int first = layoutManager.findFirstVisibleItemPosition();
+        int visibleItems = last - first;
+        Timber.i("scrollTo %d visible %d, first %d, last %d", position, visibleItems, first, last);
+        if (Math.abs(position - first) < Math.abs(position - last)) {
+            Timber.i("scrollTo LEFT");
+            int pos = position - visibleItems / 2;
+            if (pos >= 0)
+                mRecyclerView.smoothScrollToPosition(pos);
+            else
+                mRecyclerView.smoothScrollToPosition(0);
+        } else {
+            Timber.i("scrollTo RIGHT");
+            int pos = position + visibleItems / 2;
+            int total = layoutManager.getItemCount();
+            if (pos > total)
+                mRecyclerView.smoothScrollToPosition(total);
+            else if (pos == total) {
+                mRecyclerView.smoothScrollToPosition(total);
+            } else {
+                mRecyclerView.smoothScrollToPosition(pos);
+            }
+        }
     }
 }
