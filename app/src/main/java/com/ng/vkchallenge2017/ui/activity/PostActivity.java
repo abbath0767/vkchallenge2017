@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
@@ -106,6 +107,7 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     BottomBar mBottomBar;
     @BindView(R.id.cover_for_popup)
     ConstraintLayout cover;
+
 
     private InputMethodManager mInputMethodManager;
     private View popupView;
@@ -487,9 +489,12 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         mStickerDialog.cancel();
     }
 
+
+
     @Override
     public void addSticker(final Sticker sticker) {
-        mCustomImageView.addSticker(sticker);
+        Timber.i("addSticker");
+        mCustomImageView.setSticker(sticker);
     }
 
     private void showCover(boolean isVisible) {

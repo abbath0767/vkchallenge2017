@@ -27,10 +27,7 @@ public class SpanColoredBackground implements LineBackgroundSpan {
 
     @Override
     public void drawBackground(Canvas c, Paint p, int left, int right, int top, int baseline, int bottom, CharSequence text, int start, int end, int lnum) {
-        Timber.i("drawBackground, left: %d, right: %d, top: %d, baseLine: %d, bottom: %d \nstart: %d, end: %d, lnum: %d",
-                left, right, top, baseline, bottom, start, end, lnum);
         final int textWidth = Math.round(p.measureText(text, start, end));
-        Timber.i("drawBackground width: %d", textWidth);
         int crop = (right - textWidth) / 2;
         final int paintColor = p.getColor();
 

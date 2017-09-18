@@ -2,6 +2,7 @@ package com.ng.vkchallenge2017.ui.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -18,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
@@ -32,6 +34,7 @@ import com.xiaopo.flying.sticker.StickerView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +49,7 @@ import static com.xiaopo.flying.sticker.BitmapStickerIcon.LEFT_TOP;
  * Created by nikitagusarov on 11.09.17.
  */
 
-public class CustomImageView extends ConstraintLayout {
+public class CustomImageView extends RelativeLayout {
 
     @BindView(R.id.post_edit_text)
     EditText mPostEditText;
@@ -64,7 +67,8 @@ public class CustomImageView extends ConstraintLayout {
     private LayoutInflater mInflater;
     private PostPresenter.Mode mMode = PostPresenter.Mode.POST;
 
-    private Map<BitmapStickerIcon, Matrix> mapMatrix = new HashMap<>();
+    private BitmapStickerIcon cachedSticker;
+    private Matrix cachedMatrix;
 
     public CustomImageView(final Context context) {
         super(context);
@@ -91,8 +95,10 @@ public class CustomImageView extends ConstraintLayout {
         mInflater.inflate(R.layout.image_collection, this, true);
         ButterKnife.bind(this);
 
+        mStickerView.setConstrained(true);
+
         mStickerView.bringToFront();
-        mStickerView.requestLayout();
+
         mPostEditText.bringToFront();
         mPostEditText.requestLayout();
     }
@@ -246,41 +252,46 @@ public class CustomImageView extends ConstraintLayout {
     }
 
     @Override
-    protected void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        Timber.i("onSizeChanged");
+    protected void onLayout(final boolean changed, final int l, final int t, final int r, final int b) {
+        super.onLayout(changed, l, t, r, b);
 
-        Timber.i("onSizeChanged. map size: %d", mapMatrix.size());
+//        if (mStickerView.getStickerCount() != 0) {
+//            BitmapStickerIcon s = (BitmapStickerIcon) mStickerView.getCurrentSticker();
+//            if (s == null)
+//                return;
+//            float[] f = new float[9];
+//            s.getMatrix().getValues(f);
+//            Matrix m = new Matrix();
+//            f[Matrix.MTRANS_X] = 10;
+//            f[Matrix.MTRANS_Y] = 10;
+//            Timber.i("onLayout scale X :%f, Y :%f", f[Matrix.MSCALE_X], f[Matrix.MSCALE_Y]);
+//            m.setValues(f);
+//            s.setMatrix(m);
+//        }
+//        if (cachedSticker != null) {
+//            float[] f = new float[9];
+//            cachedSticker.getMatrix().getValues(f);
+//            Matrix m = new Matrix();
+//            f[Matrix.MTRANS_X] = 10;
+//            f[Matrix.MTRANS_Y] = 10;
+//            Timber.i("onLayout scale X :%f, Y :%f", f[Matrix.MSCALE_X], f[Matrix.MSCALE_Y]);
+//            m.setValues(f);
+//            cachedSticker.setMatrix(m);
+//        }
 
-        for (Map.Entry<BitmapStickerIcon, Matrix> entry: mapMatrix.entrySet()) {
-            float[] f = new float[9];
-            entry.getKey().getMatrix().getValues(f);
-            Timber.i("onStickerDragFinished, hash: %d", entry.getKey().hashCode());
-            Timber.i("onStickerDragFinished. old matrix with X:%f Y:%f", f[Matrix.MTRANS_X], f[Matrix.MTRANS_Y]);
-
-            entry.getValue().getValues(f);
-            Timber.i("onStickerDragFinished, hash: %d", entry.getKey().hashCode());
-            Timber.i("onStickerDragFinished. saved matrix with X:%f Y:%f", f[Matrix.MTRANS_X], f[Matrix.MTRANS_Y]);
-
-            BitmapStickerIcon cache = entry.getKey();
-            mStickerView.remove(entry.getKey());
-            mStickerView.addSticker(cache);
+        if (cachedSticker != null && cachedMatrix != null) {
+            cachedSticker.setMatrix(cachedMatrix);
         }
+        mStickerView.invalidate();
     }
 
-    public void addSticker(final Sticker sticker) {
-
-        mStickerView.bringToFront();
-        mStickerView.requestLayout();
+    public void setSticker(final Sticker sticker) {
         try {
             BitmapStickerIcon icon = new BitmapStickerIcon(Drawable.createFromStream(mContext.getAssets().open(sticker.getPath()), null), LEFT_TOP);
 
-            mStickerView.addSticker(icon, com.xiaopo.flying.sticker.Sticker.Position.LEFT | com.xiaopo.flying.sticker.Sticker.Position.TOP);
-            Timber.i("addSticker hash: %d", icon.hashCode());
-            mapMatrix.put(icon, icon.getMatrix());
-            float[] f = new float[9];
-            icon.getMatrix().getValues(f);
-            Timber.i("addSticker. put matrix with X:%f Y:%f", f[Matrix.MTRANS_X], f[Matrix.MTRANS_Y]);
+            cachedSticker = icon;
+
+            mStickerView.addSticker(icon);
             mStickerView.setOnStickerOperationListener(new StickerView.OnStickerOperationListener() {
                 @Override
                 public void onStickerAdded(@NonNull final com.xiaopo.flying.sticker.Sticker sticker) {
@@ -299,20 +310,23 @@ public class CustomImageView extends ConstraintLayout {
 
                 @Override
                 public void onStickerDragFinished(@NonNull final com.xiaopo.flying.sticker.Sticker sticker) {
-                    float[] f = new float[9];
-                    sticker.getMatrix().getValues(f);
-                    Timber.i("onStickerDragFinished, hash: %d", sticker.hashCode());
-                    Timber.i("onStickerDragFinished. put matrix with X:%f Y:%f", f[Matrix.MTRANS_X], f[Matrix.MTRANS_Y]);
-                    mapMatrix.put((BitmapStickerIcon) sticker, sticker.getMatrix());
-                    Timber.i("onStickerDragFinished. map size: %d", mapMatrix.size());
+                    Timber.i("onStickerDragFinished");
+                    float[] values = new float[9];
+                    Matrix clone = sticker.getMatrix();
+                    clone.getValues(values);
+                    cachedMatrix = new Matrix();
+                    cachedMatrix.setValues(values);
+                    Timber.i("onStickerDragFinished new m-x p-s: %f, %f", values[Matrix.MTRANS_X], values[Matrix.MTRANS_Y]);
                 }
 
                 @Override
                 public void onStickerZoomFinished(@NonNull final com.xiaopo.flying.sticker.Sticker sticker) {
+
                 }
 
                 @Override
                 public void onStickerFlipped(@NonNull final com.xiaopo.flying.sticker.Sticker sticker) {
+
                 }
 
                 @Override
@@ -320,10 +334,10 @@ public class CustomImageView extends ConstraintLayout {
 
                 }
             });
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }
 
