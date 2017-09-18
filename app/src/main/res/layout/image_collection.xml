@@ -40,7 +40,6 @@
             app:layout_constraintTop_toTopOf="parent"
             />
 
-
         <ImageView
             android:id="@+id/image_view_mid"
             android:layout_width="match_parent"
@@ -69,5 +68,4 @@
             />
 
     </android.support.constraint.ConstraintLayout>
-
 </merge>
