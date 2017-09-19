@@ -2,9 +2,7 @@ package com.ng.vkchallenge2017.ui.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
@@ -14,10 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
-import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.text.style.BackgroundColorSpan;
-import android.text.style.CharacterStyle;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -40,8 +35,6 @@ import com.xiaopo.flying.sticker.StickerView;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,8 +68,7 @@ public class CustomImageView extends RelativeLayout {
     private PostPresenter.Mode mMode = PostPresenter.Mode.POST;
 
     private Map<BitmapStickerIcon, Matrix> cash = new HashMap<>();
-    private BitmapStickerIcon cachedSticker;
-    private Matrix cachedMatrix;
+    private int oldHeight = 0;
 
     public CustomImageView(final Context context) {
         super(context);
@@ -136,7 +128,6 @@ public class CustomImageView extends RelativeLayout {
             } else {
 //                Timber.i("onMeasure.DONT NEED");
 //                Timber.i("onMeasure rest: %d", rest);
-
                 int spec = MeasureSpec.makeMeasureSpec(rest, MeasureSpec.EXACTLY);
 //                Timber.i("onMeasure. restSpex: %d", spec);
                 setMeasuredDimension(exceptedHeight, rest);
@@ -144,7 +135,6 @@ public class CustomImageView extends RelativeLayout {
             }
         } else {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
             if (rest < exceptedHeight) {
 //                int spec = MeasureSpec.makeMeasureSpec(rest, MeasureSpec.EXACTLY);
                 int spec = MeasureSpec.makeMeasureSpec(rest, MeasureSpec.AT_MOST);
@@ -280,42 +270,59 @@ public class CustomImageView extends RelativeLayout {
     protected void onLayout(final boolean changed, final int l, final int t, final int r, final int b) {
         super.onLayout(changed, l, t, r, b);
 
-        Timber.i("onLayout, size: %d", cash.size());
+        int newHeight = mStickerView.getHeight();
+        Timber.i("onLayout, size: %d, new : %d, old: %d", cash.size(), newHeight, oldHeight);
         for (Map.Entry<BitmapStickerIcon, Matrix> entry : cash.entrySet()) {
-            entry.getKey().setMatrix(entry.getValue());
+//            entry.getKey().setMatrix(entry.getValue());
+//
+//            float[] f = new float[9];
+//            entry.getValue().getValues(f);
+//            Timber.i("onLayout cached vals: X: %f, Y: %f", f[Matrix.MTRANS_X], f[Matrix.MTRANS_Y]);
+//            entry.getKey().getMatrix().getValues(f);
+//            Timber.i("onLayout old: X: %f, Y: %f", f[Matrix.MTRANS_X], f[Matrix.MTRANS_Y]);
+//
+//            entry.getKey().setMatrix(entry.getValue());
+//            entry.getKey().getMatrix().getValues(f);
+//            Timber.i("onLayout and new: X: %f, Y: %f", f[Matrix.MTRANS_X], f[Matrix.MTRANS_Y]);
 
-            float[] f = new float[9];
-            entry.getValue().getValues(f);
-            Timber.i("onLayout cached vals: X: %f, Y: %f", f[Matrix.MTRANS_X], f[Matrix.MTRANS_Y]);
-            entry.getKey().getMatrix().getValues(f);
-            Timber.i("onLayout old: X: %f, Y: %f", f[Matrix.MTRANS_X], f[Matrix.MTRANS_Y]);
+            if (oldHeight != 0) {
+                entry.getKey().setMatrix(entry.getValue());
+//                Timber.i("onLayout", entry.getKey().getPosition());
 
-            entry.getKey().setMatrix(entry.getValue());
-            entry.getKey().getMatrix().getValues(f);
-            Timber.i("onLayout and new: X: %f, Y: %f", f[Matrix.MTRANS_X], f[Matrix.MTRANS_Y]);
+                float[] f = new float[9];
+                entry.getValue().getValues(f);
+                entry.getKey().getMatrix().getValues(f);
+
+                float ratio = (float) newHeight/ (float) oldHeight;
+                f[Matrix.MTRANS_Y] = f[Matrix.MTRANS_Y] * ratio;
+                entry.getValue().setValues(f);
+                entry.getKey().setMatrix(entry.getValue());
+
+                entry.getKey().getMatrix().getValues(f);
+            }
         }
 
         mStickerView.invalidate();
+        oldHeight = newHeight;
     }
 
     public void setSticker(final Sticker sticker) {
         try {
             BitmapStickerIcon icon = new BitmapStickerIcon(Drawable.createFromStream(mContext.getAssets().open(sticker.getPath()), null), LEFT_TOP);
 
-            cachedSticker = icon;
-
             mStickerView.addSticker(icon);
-            mStickerView.setOnTouchListener(new OnTouchListener() {
-                @Override
-                public boolean onTouch(final View view, final MotionEvent motionEvent) {
-                    Timber.i("onTouch %s", motionEvent.toString());
-                    return false;
-                }
-            });
+//            mStickerView.setOnTouchListener(new OnTouchListener() {
+//                @Override
+//                public boolean onTouch(final View view, final MotionEvent motionEvent) {
+//                    Timber.i("onTouch %s", motionEvent.toString());
+//                    return false;
+//                }
+//            });
             mStickerView.setOnStickerOperationListener(new StickerView.OnStickerOperationListener() {
                 @Override
                 public void onStickerAdded(@NonNull final com.xiaopo.flying.sticker.Sticker sticker) {
                     Timber.i("onStickerAdded");
+                    cash.put((BitmapStickerIcon)sticker, sticker.getMatrix());
                 }
 
                 @Override
