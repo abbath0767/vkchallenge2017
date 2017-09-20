@@ -142,6 +142,7 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     private StickerDialog mStickerDialog;
 
     private ProgressDialog mProgressDialog;
+    private VKRequest request;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -258,7 +259,6 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     }
 
     private int oldValue = 0;
-
     private void setUpKeyListener() {
         KeyBoardListener.observeKeyBoard(mParentLayout, mPopupWindow, new KeyBoardListener.KeyBoardMoveListener() {
             @Override
@@ -625,33 +625,47 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     //todo add screen!
     @Override
     public void sendImageToWall() {
-
         Timber.i("sendImageToWall userId %s", getMyId());
 
-        mProgressDialog.show();
+        VKUploadImage image = new VKUploadImage(getBitmapFromImageView(), VKImageParameters.jpgImage(1f));
+        request = VKApi.uploadWallPhotoRequest(image, getMyId(), 0);
 
-//        VKUploadImage image = new VKUploadImage(getBitmapFromImageView(), VKImageParameters.jpgImage(1f));
-//        VKRequest request = VKApi.uploadWallPhotoRequest(image, getMyId(), 0);
-//
-//        request.executeWithListener(new VKRequest.VKRequestListener() {
-//            @Override
-//            public void onComplete(final VKResponse response) {
-//                Timber.i("onComplete");
-//                VKApiPhoto photoModel = ((VKPhotoArray) response.parsedModel).get(0);
-//                makePost(new VKAttachments(photoModel), "", getMyId());
-//            }
-//
-//            @Override
-//            public void attemptFailed(final VKRequest request, final int attemptNumber,
-//                                      final int totalAttempts) {
-//                Timber.i("attemptFailed");
-//            }
-//
-//            @Override
-//            public void onError(final VKError error) {
-//                Timber.i("request onError %s", error.toString());
-//            }
-//        });
+        mProgressDialog.show();
+        setClickListener();
+
+        request.executeWithListener(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(final VKResponse response) {
+                Timber.i("onComplete");
+                VKApiPhoto photoModel = ((VKPhotoArray) response.parsedModel).get(0);
+                makePost(new VKAttachments(photoModel), "", getMyId());
+            }
+
+            @Override
+            public void attemptFailed(final VKRequest request, final int attemptNumber,
+                                      final int totalAttempts) {
+                Timber.i("attemptFailed");
+                Toast.makeText(getBaseContext(),
+                        String.format("Error: $s, $d", request.toString(), attemptNumber), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onError(final VKError error) {
+                Timber.i("request onError %s", error.toString());
+                Toast.makeText(getBaseContext(),
+                        String.format("Error: $s", error.toString()), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void setClickListener() {
+        mProgressDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                request.cancel();
+                startActivity(new Intent(PostActivity.this, PostActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            }
+        });
     }
 
     int getMyId() {
@@ -670,11 +684,14 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
             @Override
             public void onComplete(VKResponse response) {
                 Timber.i("onComplete %s", response);
+                mProgressDialog.finishLoading();
             }
 
             @Override
             public void onError(VKError error) {
                 Timber.i(" make post onError %s", error);
+                Toast.makeText(getBaseContext(),
+                        String.format("Error: $s", error.toString()), Toast.LENGTH_LONG).show();
             }
         });
     }

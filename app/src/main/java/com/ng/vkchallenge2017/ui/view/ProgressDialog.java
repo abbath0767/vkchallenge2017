@@ -51,13 +51,6 @@ public class ProgressDialog extends Dialog {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-
-        mButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-
-            }
-        });
     }
 
     @Override
@@ -77,5 +70,9 @@ public class ProgressDialog extends Dialog {
         mButton.setText(R.string.create_more);
         mButton.setTextColor(getContext().getResources().getColor(android.R.color.white));
         mButton.setBackgroundResource(R.drawable.loading_button_finish);
+    }
+
+    public void setOnClickListener(@NonNull final  View.OnClickListener listener) {
+        mButton.setOnClickListener(listener);
     }
 }
