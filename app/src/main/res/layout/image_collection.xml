@@ -33,6 +33,8 @@
             android:inputType="text|textMultiLine|textCapSentences|textNoSuggestions"
             android:padding="@dimen/text_corner"
             android:textSize="@dimen/post_et_text_size"
+            android:maxLines="@integer/max_lines"
+            android:ellipsize="end"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"

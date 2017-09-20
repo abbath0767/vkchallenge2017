@@ -3,6 +3,7 @@ package com.ng.vkchallenge2017.ui.view;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
@@ -80,6 +81,7 @@ public class CustomImageView extends RelativeLayout {
             showBucket(true);
         }
     };
+    private Rect mRectBucket;
 
     public CustomImageView(final Context context) {
         super(context);
@@ -110,6 +112,50 @@ public class CustomImageView extends RelativeLayout {
 
         bringToFrontViews();
         mBucketFab.setVisibility(false);
+        setStickerListener();
+    }
+
+    private void setStickerListener() {
+        mStickerView.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(final View view, final MotionEvent motionEvent) {
+                Timber.i("onTouch %s", mStickerView.getCurrentSticker());
+
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    Timber.i("onTouch ACTION DOWN");
+                    if (mBucketFab.getVisibility() == View.INVISIBLE) {
+                        Timber.i("onTouch SHOW");
+                        handler.postDelayed(runnable, 2000);
+                    }
+
+                    mBooleanIsPressed = true;
+                }
+
+                if (mRectBucket.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
+                    Timber.i("onTouch GROW");
+                    growButton(true);
+                } else {
+                    Timber.i("onTouch UN GROW");
+                    growButton(false);
+                }
+
+                if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                    Timber.i("onTouch ACTION UP");
+                    if (mBooleanIsPressed) {
+                        mBooleanIsPressed = false;
+                        handler.removeCallbacks(runnable);
+                        showBucket(false);
+
+                        if (mRectBucket.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
+                            Timber.i("onTouch NEED DELETE");
+                            mStickerView.remove(mStickerView.getCurrentSticker());
+                        }
+                    }
+                }
+
+                return false;
+            }
+        });
     }
 
     private void bringToFrontViews() {
@@ -118,10 +164,12 @@ public class CustomImageView extends RelativeLayout {
         mPostEditText.requestLayout();
         mBucketFab.bringToFront();
         mBucketFab.requestLayout();
+        mRectBucket = new Rect();
     }
 
     private void showBucket(boolean isVisible) {
-        mBucketFab.setVisibility(isVisible);
+        if (mStickerView.getCurrentSticker() != null)
+            mBucketFab.setVisibility(isVisible);
     }
 
     public void setOnTextChangeListener(@NonNull final TextWatcher textWatcher) {
@@ -130,14 +178,13 @@ public class CustomImageView extends RelativeLayout {
 
     @Override
     protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
-        Timber.i("onMeasure. mode : %s", mMode);
         int rest = calculateRest();
-        int overWidth = getMeasuredWidth();
+//        int overWidth = getMeasuredWidth();
 //        Timber.i("onMeasure specs W: %d, H: %d", widthMeasureSpec, heightMeasureSpec);
 //        Timber.i("onMeasure get() W: %d, H: %d", getMeasuredWidth(), getMeasuredHeight());
 //        Timber.i("onMeasure getSpec() W: %d, H: %d", MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.getSize(heightMeasureSpec));
         int exceptedHeight = MeasureSpec.getSize(widthMeasureSpec);
-        int realHeight = MeasureSpec.getSize(heightMeasureSpec);
+//        int realHeight = MeasureSpec.getSize(heightMeasureSpec);
 
 //        Timber.i("onMeasure. excepted: %d, real: %d, rest: %d", exceptedHeight, realHeight, rest);
         if (mMode == PostPresenter.Mode.POST) {
@@ -197,6 +244,7 @@ public class CustomImageView extends RelativeLayout {
 
     public void setUpMode(final PostPresenter.Mode mode) {
         mMode = mode;
+        mBucketFab.setMode(mode);
         requestLayout();
     }
 
@@ -291,89 +339,76 @@ public class CustomImageView extends RelativeLayout {
     protected void onLayout(final boolean changed, final int l, final int t, final int r, final int b) {
         super.onLayout(changed, l, t, r, b);
 
-        int newHeight = mStickerView.getHeight();
-        Timber.i("onLayout, size: %d, new : %d, old: %d", cash.size(), newHeight, oldHeight);
-        for (Map.Entry<BitmapStickerIcon, Matrix> entry : cash.entrySet()) {
-            if (oldHeight != 0) {
-                entry.getKey().setMatrix(entry.getValue());
-//                Timber.i("onLayout", entry.getKey().getPosition());
+        if (mBucketFab.getVisibility() != View.VISIBLE) {
+            int newHeight = mStickerView.getHeight();
+            Timber.i("onLayout, size: %d, new : %d, old: %d", cash.size(), newHeight, oldHeight);
+            for (Map.Entry<BitmapStickerIcon, Matrix> entry : cash.entrySet()) {
+                if (oldHeight != 0) {
+                    entry.getKey().setMatrix(entry.getValue());
 
-                float[] f = new float[9];
-                entry.getValue().getValues(f);
-                entry.getKey().getMatrix().getValues(f);
+                    float[] f = new float[9];
+                    entry.getValue().getValues(f);
+                    entry.getKey().getMatrix().getValues(f);
 
-                float ratio = (float) newHeight / (float) oldHeight;
-                f[Matrix.MTRANS_Y] = f[Matrix.MTRANS_Y] * ratio;
-                entry.getValue().setValues(f);
-                entry.getKey().setMatrix(entry.getValue());
+                    float ratio = (float) newHeight / (float) oldHeight;
+                    f[Matrix.MTRANS_Y] = f[Matrix.MTRANS_Y] * ratio;
+                    entry.getValue().setValues(f);
+                    entry.getKey().setMatrix(entry.getValue());
 
-                entry.getKey().getMatrix().getValues(f);
+                    entry.getKey().getMatrix().getValues(f);
+                }
             }
+
+            mStickerView.invalidate();
+            oldHeight = newHeight;
         }
 
-        mStickerView.invalidate();
-        oldHeight = newHeight;
+        mBucketFab.getHitRect(mRectBucket);
     }
 
+    private void growButton(boolean needGrow) {
+        mBucketFab.grow(needGrow);
+    }
 
     public void setSticker(final Sticker sticker) {
         try {
             BitmapStickerIcon icon = new BitmapStickerIcon(Drawable.createFromStream(mContext.getAssets().open(sticker.getPath()), null), LEFT_TOP);
 
             mStickerView.addSticker(icon);
-            mStickerView.setOnTouchListener(new OnTouchListener() {
-                @Override
-                public boolean onTouch(final View view, final MotionEvent motionEvent) {
-                    Timber.i("onTouchEvent X %f, Y %f", motionEvent.getX(), motionEvent.getY());
 
-                    if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                        handler.postDelayed(runnable, 2000);
-                        mBooleanIsPressed = true;
-                    }
-
-                    if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                        if (mBooleanIsPressed) {
-                            mBooleanIsPressed = false;
-                            handler.removeCallbacks(runnable);
-                            showBucket(false);
-                        }
-                    }
-                    return false;
-                }
-            });
             mStickerView.setOnStickerOperationListener(new StickerView.OnStickerOperationListener() {
                 @Override
                 public void onStickerAdded(@NonNull final com.xiaopo.flying.sticker.Sticker sticker) {
-                    Timber.i("onStickerAdded");
+//                    Timber.i("onStickerAdded");
                     cash.put((BitmapStickerIcon) sticker, sticker.getMatrix());
                 }
 
                 @Override
                 public void onStickerClicked(@NonNull final com.xiaopo.flying.sticker.Sticker sticker) {
-                    Timber.i("onStickerClicked");
+//                    Timber.i("onStickerClicked");
                 }
 
                 @Override
                 public void onStickerDeleted(@NonNull final com.xiaopo.flying.sticker.Sticker sticker) {
-                    Timber.i("onStickerDeleted");
+//                    Timber.i("onStickerDeleted");
                     cash.remove((BitmapStickerIcon) sticker);
                 }
 
                 @Override
                 public void onStickerDragFinished(@NonNull final com.xiaopo.flying.sticker.Sticker sticker) {
-                    Timber.i("onStickerDragFinished");
+//                    Timber.i("onStickerDragFinished");
                     float[] values = new float[9];
                     Matrix old = sticker.getMatrix();
                     old.getValues(values);
                     Matrix cached = new Matrix();
                     cached.setValues(values);
-                    Timber.i("onStickerDragFinished X %f Y %f", values[Matrix.MTRANS_X], values[Matrix.MTRANS_Y]);
+//                    Timber.i("onStickerDragFinished X %f Y %f", values[Matrix.MTRANS_X], values[Matrix.MTRANS_Y]);
                     cash.put((BitmapStickerIcon) sticker, cached);
                 }
 
                 @Override
                 public void onStickerZoomFinished(@NonNull final com.xiaopo.flying.sticker.Sticker sticker) {
-                    Timber.i("onStickerZoomFinished");
+//                    Timber.i("onStickerZoomFinished");
                     float[] values = new float[9];
                     Matrix old = sticker.getMatrix();
                     old.getValues(values);
