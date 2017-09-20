@@ -27,7 +27,7 @@ public class App extends Application {
     }
 
     private void initLeakCanary() {
-        LeakCanary.install(this);
+//        LeakCanary.install(this);
     }
 
     private void initVkSdk() {

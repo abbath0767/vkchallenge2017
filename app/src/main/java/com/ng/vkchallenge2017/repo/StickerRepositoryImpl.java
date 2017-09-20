@@ -6,12 +6,11 @@ import android.support.annotation.NonNull;
 import com.ng.vkchallenge2017.model.sticker.Sticker;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import timber.log.Timber;
 
 /**
  * Created by nikitagusarov on 17.09.17.
@@ -26,7 +25,7 @@ public class StickerRepositoryImpl implements StickerRepository {
 
     private static StickerRepository instance;
 
-    private Context mContext;
+    private WeakReference<Context> mContextWeakReference;
 
     public static StickerRepository newInstance(@NonNull final Context context) {
         if (instance == null)
@@ -37,7 +36,7 @@ public class StickerRepositoryImpl implements StickerRepository {
     private List<Sticker> mStickers;
 
     private StickerRepositoryImpl(@NonNull final Context context) {
-        mContext = context;
+        mContextWeakReference = new WeakReference<Context>(context);
         mStickers = new ArrayList<>();
 
         initList();
@@ -45,7 +44,7 @@ public class StickerRepositoryImpl implements StickerRepository {
 
     private void initList() {
         try {
-            String[] list = mContext.getAssets().list(STICKER_ASSET_FOLDER);
+            String[] list = mContextWeakReference.get().getAssets().list(STICKER_ASSET_FOLDER);
 
             for (String path : list) {
                 mStickers.add(new Sticker(ASSET_PREFIX + STICKER_ASSET_FOLDER + DIVIDER + path));
