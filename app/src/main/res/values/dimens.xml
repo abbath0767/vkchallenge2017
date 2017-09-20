@@ -49,6 +49,15 @@
     <dimen name="sticker_recycler_padding">8dp</dimen>
     <dimen name="sticker_square">78dp</dimen>
     <dimen name="sticker_margin">4dp</dimen>
+    <dimen name="dialog_text_size">16sp</dimen>
+    <dimen name="loading_progress_size">48dp</dimen>
+    <dimen name="loading_text_top_margin">16dp</dimen>
+    <dimen name="loading_button_height">48dp</dimen>
+    <dimen name="loading_button_margin">16dp</dimen>
+    <dimen name="loading_button_radius">4dp</dimen>
+    <dimen name="loading_icon_size">24dp</dimen>
+    <dimen name="loading_icon_corner">24dp</dimen>
+    <dimen name="loading_icon_corner_width">4dp</dimen>
 
 
 </resources>

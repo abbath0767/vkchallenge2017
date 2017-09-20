@@ -41,4 +41,12 @@
         <item name="android:windowExitAnimation">@anim/sticker_popup_hide</item>
     </style>
 
+    <style name="LoadingDialogStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="colorPrimaryDark">@color/cool_blue</item>
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="colorAccent">@color/loading_accent_color</item>
+    </style>
 </resources>

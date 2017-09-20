@@ -16,4 +16,9 @@
 
     <!--stickers-->
     <string name="stickers_text_popup">Стикеры</string>
+
+    <!--дщфвштп вшфдщп-->
+    <string name="publishing">Публикация...</string>
+    <string name="cancel">Отмена</string>
+    <string name="create_more">Создать еще</string>
 </resources>

@@ -41,4 +41,9 @@
     <color name="sticker_back_color">#ffffff</color>
     <color name="sticker_text_color">#2c2d2e</color>
 
+    <!--load dialog-->
+    <color name="white_dialog_bachground">#ffffff</color>
+    <color name="dialog_text_color">#909499</color>
+    <color name="loading_accent_color">#528bcc</color>
+
 </resources>

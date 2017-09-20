@@ -58,6 +58,7 @@ import com.ng.vkchallenge2017.ui.view.BottomBar;
 import com.ng.vkchallenge2017.ui.adapter.BottomSquareRVAdapter;
 import com.ng.vkchallenge2017.ui.view.CustomImageView;
 import com.ng.vkchallenge2017.ui.view.KeyBoardListener;
+import com.ng.vkchallenge2017.ui.view.ProgressDialog;
 import com.ng.vkchallenge2017.ui.view.StickerDialog;
 import com.ng.vkchallenge2017.view.PostView;
 import com.vk.sdk.VKAccessToken;
@@ -139,6 +140,8 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     private Uri photoUri;
 
     private StickerDialog mStickerDialog;
+
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -227,6 +230,14 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         });
 
         initInputManager();
+
+        setUpLoadingDialog();
+    }
+
+    private void setUpLoadingDialog() {
+        mProgressDialog = new ProgressDialog(this, R.style.LoadingDialogStyle);
+        mProgressDialog.setContentView(R.layout.dialog_loading);
+        mProgressDialog.setCancelable(false);
     }
 
     private void bringToFrontViews() {
@@ -617,28 +628,30 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
 
         Timber.i("sendImageToWall userId %s", getMyId());
 
-        VKUploadImage image = new VKUploadImage(getBitmapFromImageView(), VKImageParameters.jpgImage(1f));
-        VKRequest request = VKApi.uploadWallPhotoRequest(image, getMyId(), 0);
+        mProgressDialog.show();
 
-        request.executeWithListener(new VKRequest.VKRequestListener() {
-            @Override
-            public void onComplete(final VKResponse response) {
-                Timber.i("onComplete");
-                VKApiPhoto photoModel = ((VKPhotoArray) response.parsedModel).get(0);
-                makePost(new VKAttachments(photoModel), "", getMyId());
-            }
-
-            @Override
-            public void attemptFailed(final VKRequest request, final int attemptNumber,
-                                      final int totalAttempts) {
-                Timber.i("attemptFailed");
-            }
-
-            @Override
-            public void onError(final VKError error) {
-                Timber.i("request onError %s", error.toString());
-            }
-        });
+//        VKUploadImage image = new VKUploadImage(getBitmapFromImageView(), VKImageParameters.jpgImage(1f));
+//        VKRequest request = VKApi.uploadWallPhotoRequest(image, getMyId(), 0);
+//
+//        request.executeWithListener(new VKRequest.VKRequestListener() {
+//            @Override
+//            public void onComplete(final VKResponse response) {
+//                Timber.i("onComplete");
+//                VKApiPhoto photoModel = ((VKPhotoArray) response.parsedModel).get(0);
+//                makePost(new VKAttachments(photoModel), "", getMyId());
+//            }
+//
+//            @Override
+//            public void attemptFailed(final VKRequest request, final int attemptNumber,
+//                                      final int totalAttempts) {
+//                Timber.i("attemptFailed");
+//            }
+//
+//            @Override
+//            public void onError(final VKError error) {
+//                Timber.i("request onError %s", error.toString());
+//            }
+//        });
     }
 
     int getMyId() {
