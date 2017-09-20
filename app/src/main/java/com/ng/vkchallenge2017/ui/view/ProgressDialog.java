@@ -68,6 +68,7 @@ public class ProgressDialog extends Dialog {
         mImageView.setVisibility(View.VISIBLE);
         mViewCorner.setVisibility(View.VISIBLE);
         mButton.setText(R.string.create_more);
+        mTextView.setText(R.string.publishing_complite);
         mButton.setTextColor(getContext().getResources().getColor(android.R.color.white));
         mButton.setBackgroundResource(R.drawable.loading_button_finish);
     }
