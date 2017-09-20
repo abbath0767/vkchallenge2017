@@ -15,10 +15,10 @@
 
         <com.xiaopo.flying.sticker.StickerView
             android:id="@+id/sticker_container"
-            app:showBorder="false"
-            app:showIcons="false"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:showBorder="false"
+            app:showIcons="false"
             />
 
         <EditText
@@ -31,9 +31,9 @@
             android:gravity="center"
             android:hint="@string/post_et_hint"
             android:inputType="text|textMultiLine|textCapSentences|textNoSuggestions"
+            android:padding="@dimen/text_corner"
             android:textSize="@dimen/post_et_text_size"
             android:textStyle="bold"
-            android:padding="@dimen/text_corner"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -63,6 +63,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scaleType="fitEnd"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            />
+
+        <com.ng.vkchallenge2017.ui.view.BucketFab
+            android:id="@+id/bucket_fab"
+            android:layout_width="@dimen/bucket_corner_enabled"
+            android:layout_height="@dimen/bucket_corner_enabled"
+            android:layout_marginBottom="@dimen/bucket_bot_margin"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"

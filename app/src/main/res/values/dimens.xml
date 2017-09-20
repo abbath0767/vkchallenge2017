@@ -28,6 +28,7 @@
     <dimen name="bottom_bar_post_button_text_size">13sp</dimen>
     <dimen name="cursor_width">2dp</dimen>
 
+
     <!--default-->
     <dimen name="button_default_padding">4dp</dimen>
     <dimen name="square_corner">4dp</dimen>
@@ -58,6 +59,13 @@
     <dimen name="loading_icon_size">24dp</dimen>
     <dimen name="loading_icon_corner">24dp</dimen>
     <dimen name="loading_icon_corner_width">4dp</dimen>
+    <dimen name="bucket_corner_enabled">56dp</dimen>
+    <dimen name="bucket_corner">28dp</dimen>
+    <dimen name="bucket_bot_margin">12dp</dimen>
+    <dimen name="bucket_size_image">24dp</dimen>
+    <dimen name="bucket_corner_disabled">48dp</dimen>
+    <dimen name="bucket_outline_radius">24dp</dimen>
+    <dimen name="bucket_outline_width">2dp</dimen>
 
 
 </resources>

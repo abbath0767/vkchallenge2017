@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -31,6 +32,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.Toast;
@@ -126,13 +128,11 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
     @BindView(R.id.top_background)
     View mCoverBackground;
 
-
     private InputMethodManager mInputMethodManager;
     private View popupView;
     private PopupWindow mPopupWindow;
     private int keyboardHeight;
     private boolean isKeyBoardVisible;
-//    private boolean keyboardNeedVisible = false;
 
     private RecyclerView mPhotoRecyclerView;
     private PopupSquareAdapter mPopupSquareAdapter;
@@ -143,6 +143,8 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
 
     private ProgressDialog mProgressDialog;
     private VKRequest request;
+
+    private boolean mBooleanIsPressed = false;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -535,7 +537,6 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
 
     @Override
     public void addSticker(final Sticker sticker) {
-        Timber.i("addSticker");
         mCustomImageView.setSticker(sticker);
     }
 

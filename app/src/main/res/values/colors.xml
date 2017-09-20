@@ -15,10 +15,12 @@
     <color name="blue_button_transperent_24">#3d528bcc</color>
     <color name="post_tab_selected_text">#528bcc</color>
     <color name="button_sent_enable">#528bcc</color>
+    <color name="bucket_outline">#528bcc</color>
     <color name="post_tab_not_selected_text">#b7528bcc</color>
     <color name="black_with_big_transperent">#1e000000</color>
     <color name="black_text">#2c2d2e</color>
     <color name="white_text">#ffffff</color>
+    <color name="white_bucket">#ffffff</color>
     <color name="white_text_background">#5bffffff</color>
     <color name="top_and_bot_colour">#eaffffff</color>
     <color name="cursor_color_first">#b7528bcc</color>

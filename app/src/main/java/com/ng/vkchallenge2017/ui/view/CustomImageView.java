@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TabLayout;
@@ -61,6 +62,8 @@ public class CustomImageView extends RelativeLayout {
     ImageView mImageViewBot;
     @BindView(R.id.sticker_container)
     StickerView mStickerView;
+    @BindView(R.id.bucket_fab)
+    BucketFab mBucketFab;
 
     private Context mContext;
 
@@ -69,6 +72,14 @@ public class CustomImageView extends RelativeLayout {
 
     private Map<BitmapStickerIcon, Matrix> cash = new HashMap<>();
     private int oldHeight = 0;
+
+    private boolean mBooleanIsPressed = false;
+    private final Handler handler = new Handler();
+    private final Runnable runnable = new Runnable() {
+        public void run() {
+            showBucket(true);
+        }
+    };
 
     public CustomImageView(final Context context) {
         super(context);
@@ -97,10 +108,20 @@ public class CustomImageView extends RelativeLayout {
 
         mStickerView.setConstrained(true);
 
-        mStickerView.bringToFront();
+        bringToFrontViews();
+        mBucketFab.setVisibility(false);
+    }
 
+    private void bringToFrontViews() {
+        mStickerView.bringToFront();
         mPostEditText.bringToFront();
         mPostEditText.requestLayout();
+        mBucketFab.bringToFront();
+        mBucketFab.requestLayout();
+    }
+
+    private void showBucket(boolean isVisible) {
+        mBucketFab.setVisibility(isVisible);
     }
 
     public void setOnTextChangeListener(@NonNull final TextWatcher textWatcher) {
@@ -273,18 +294,6 @@ public class CustomImageView extends RelativeLayout {
         int newHeight = mStickerView.getHeight();
         Timber.i("onLayout, size: %d, new : %d, old: %d", cash.size(), newHeight, oldHeight);
         for (Map.Entry<BitmapStickerIcon, Matrix> entry : cash.entrySet()) {
-//            entry.getKey().setMatrix(entry.getValue());
-//
-//            float[] f = new float[9];
-//            entry.getValue().getValues(f);
-//            Timber.i("onLayout cached vals: X: %f, Y: %f", f[Matrix.MTRANS_X], f[Matrix.MTRANS_Y]);
-//            entry.getKey().getMatrix().getValues(f);
-//            Timber.i("onLayout old: X: %f, Y: %f", f[Matrix.MTRANS_X], f[Matrix.MTRANS_Y]);
-//
-//            entry.getKey().setMatrix(entry.getValue());
-//            entry.getKey().getMatrix().getValues(f);
-//            Timber.i("onLayout and new: X: %f, Y: %f", f[Matrix.MTRANS_X], f[Matrix.MTRANS_Y]);
-
             if (oldHeight != 0) {
                 entry.getKey().setMatrix(entry.getValue());
 //                Timber.i("onLayout", entry.getKey().getPosition());
@@ -293,7 +302,7 @@ public class CustomImageView extends RelativeLayout {
                 entry.getValue().getValues(f);
                 entry.getKey().getMatrix().getValues(f);
 
-                float ratio = (float) newHeight/ (float) oldHeight;
+                float ratio = (float) newHeight / (float) oldHeight;
                 f[Matrix.MTRANS_Y] = f[Matrix.MTRANS_Y] * ratio;
                 entry.getValue().setValues(f);
                 entry.getKey().setMatrix(entry.getValue());
@@ -306,23 +315,37 @@ public class CustomImageView extends RelativeLayout {
         oldHeight = newHeight;
     }
 
+
     public void setSticker(final Sticker sticker) {
         try {
             BitmapStickerIcon icon = new BitmapStickerIcon(Drawable.createFromStream(mContext.getAssets().open(sticker.getPath()), null), LEFT_TOP);
 
             mStickerView.addSticker(icon);
-//            mStickerView.setOnTouchListener(new OnTouchListener() {
-//                @Override
-//                public boolean onTouch(final View view, final MotionEvent motionEvent) {
-//                    Timber.i("onTouch %s", motionEvent.toString());
-//                    return false;
-//                }
-//            });
+            mStickerView.setOnTouchListener(new OnTouchListener() {
+                @Override
+                public boolean onTouch(final View view, final MotionEvent motionEvent) {
+                    Timber.i("onTouchEvent X %f, Y %f", motionEvent.getX(), motionEvent.getY());
+
+                    if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                        handler.postDelayed(runnable, 2000);
+                        mBooleanIsPressed = true;
+                    }
+
+                    if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                        if (mBooleanIsPressed) {
+                            mBooleanIsPressed = false;
+                            handler.removeCallbacks(runnable);
+                            showBucket(false);
+                        }
+                    }
+                    return false;
+                }
+            });
             mStickerView.setOnStickerOperationListener(new StickerView.OnStickerOperationListener() {
                 @Override
                 public void onStickerAdded(@NonNull final com.xiaopo.flying.sticker.Sticker sticker) {
                     Timber.i("onStickerAdded");
-                    cash.put((BitmapStickerIcon)sticker, sticker.getMatrix());
+                    cash.put((BitmapStickerIcon) sticker, sticker.getMatrix());
                 }
 
                 @Override
