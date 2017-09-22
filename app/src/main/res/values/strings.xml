@@ -2,7 +2,6 @@
 
     <!--base-->
     <string name="app_name">VKChallenge2017</string>
-    <integer name="com_vk_sdk_AppId">6175214</integer>
 
     <!--login-->
     <string name="enter_from_vk">Войти через вконтакте</string>
@@ -17,7 +16,7 @@
     <!--stickers-->
     <string name="stickers_text_popup">Стикеры</string>
 
-    <!--дщфвштп вшфдщп-->
+    <!--loading dialog-->
     <string name="publishing">Публикация...</string>
     <string name="cancel">Отмена</string>
     <string name="create_more">Создать еще</string>

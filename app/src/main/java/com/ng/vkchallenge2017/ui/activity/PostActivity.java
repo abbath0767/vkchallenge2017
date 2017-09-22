@@ -46,8 +46,7 @@ import com.ng.vkchallenge2017.model.square.Thumbs;
 import com.ng.vkchallenge2017.model.sticker.Sticker;
 import com.ng.vkchallenge2017.model.text_style.TextStyle;
 import com.ng.vkchallenge2017.presentation.PostPresenter;
-import com.ng.vkchallenge2017.repo.PhotoRepositoryImpl;
-import com.ng.vkchallenge2017.repo.StickerRepositoryImpl;
+import com.ng.vkchallenge2017.repo.RepositoryComponent;
 import com.ng.vkchallenge2017.ui.adapter.PopupSquareAdapter;
 import com.ng.vkchallenge2017.ui.adapter.StickerRVAdapter;
 import com.ng.vkchallenge2017.ui.view.BottomBar;
@@ -90,11 +89,14 @@ public class PostActivity extends AppCompatActivity implements PostViewContract.
     public static final int REQUEST_CAMERA = 23;
     public static final int REQUEST_GALLERY = 33;
 
-
     PostViewContract.Presenter mPostPresenter;
 
     public PostViewContract.Presenter providePresenter() {
-        return new PostPresenter(this, new PhotoRepositoryImpl(this), StickerRepositoryImpl.newInstance(this));
+        return new PostPresenter(this,
+                RepositoryComponent.getPhotoRepository(this),
+                RepositoryComponent.getStickerRepository(this),
+                RepositoryComponent.getSquareRepository(),
+                RepositoryComponent.getTextStyleRepository());
     }
 
     @BindView(R.id.post_toolbar_left_button)
@@ -249,6 +251,7 @@ public class PostActivity extends AppCompatActivity implements PostViewContract.
     }
 
     private int oldValue = 0;
+
     private void setUpKeyListener() {
         KeyBoardListener.observeKeyBoard(mParentLayout, mPopupWindow, new KeyBoardListener.KeyBoardMoveListener() {
             @Override

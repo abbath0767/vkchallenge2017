@@ -8,7 +8,7 @@ import java.util.List;
  * Created by nikitagusarov on 16.09.17.
  */
 
-public interface TextStyleContainer {
+public interface TextStyleRepository {
     List<TextStyle> getStyles();
     TextStyle getStyle(int position);
 }

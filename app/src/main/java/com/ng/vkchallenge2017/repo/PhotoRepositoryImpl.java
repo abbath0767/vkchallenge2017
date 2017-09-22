@@ -31,7 +31,15 @@ public class PhotoRepositoryImpl implements PhotoRepository {
     @NonNull
     private List<PhotoSquareBase> mPhotoSquareBases;
 
-    public PhotoRepositoryImpl(@NonNull final Context context) {
+    private static PhotoRepository instance;
+
+    public static PhotoRepository getInstance(Context context) {
+        if (instance == null)
+            instance = new PhotoRepositoryImpl(context);
+        return instance;
+    }
+
+    private PhotoRepositoryImpl(@NonNull final Context context) {
         mContext = context;
         initList();
     }

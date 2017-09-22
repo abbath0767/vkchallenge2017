@@ -6,8 +6,8 @@ import com.ng.vkchallenge2017.repo.PhotoRepository;
 import com.ng.vkchallenge2017.repo.SquareRepository;
 import com.ng.vkchallenge2017.repo.SquareRepositoryImpl;
 import com.ng.vkchallenge2017.repo.StickerRepository;
-import com.ng.vkchallenge2017.repo.TextStyleContainer;
-import com.ng.vkchallenge2017.repo.TextStyleContainerImpl;
+import com.ng.vkchallenge2017.repo.TextStyleRepository;
+import com.ng.vkchallenge2017.repo.TextStyleRepositoryImpl;
 import com.ng.vkchallenge2017.view.PostViewContract;
 
 import timber.log.Timber;
@@ -25,7 +25,7 @@ public class PostPresenter implements PostViewContract.Presenter {
     private final PostViewContract.View mView;
     private SquareRepository mSquareRepository;
     private PhotoRepository mPhotoRepository;
-    private TextStyleContainer mTextStyleContainer;
+    private TextStyleRepository mTextStyleContainer;
     private StickerRepository mStickersRepository;
     private Mode mMode = POST;
     private boolean loaded = false;
@@ -35,19 +35,21 @@ public class PostPresenter implements PostViewContract.Presenter {
 
     public PostPresenter(@NonNull final PostViewContract.View postActivity,
                          @NonNull final PhotoRepository photoRepository,
-                         @NonNull final StickerRepository stickerRepository) {
+                         @NonNull final StickerRepository stickerRepository,
+                         @NonNull final SquareRepository squareRepository,
+                         @NonNull final TextStyleRepository textStyleRepository) {
         mView = postActivity;
         mPhotoRepository = photoRepository;
         mStickersRepository = stickerRepository;
-        mSquareRepository = SquareRepositoryImpl.getInstance();
-        mTextStyleContainer = TextStyleContainerImpl.getInstance();
+        mSquareRepository = squareRepository;
+        mTextStyleContainer = textStyleRepository;
 
         mView.setBottomBarRecycler(mSquareRepository.getSquares());
         mView.setAdapterData(mPhotoRepository.getPhotoSquares());
         mView.setTextStyle(mTextStyleContainer.getStyle(textStyleNum));
         mView.initStickersDialog(mStickersRepository.getStickers());
     }
-    
+
     public void onSquareClick(final int position) {
         Timber.i("onSquareClick, pos: %d", position);
         if (position != mSquareRepository.getSquares().size() - 1) {

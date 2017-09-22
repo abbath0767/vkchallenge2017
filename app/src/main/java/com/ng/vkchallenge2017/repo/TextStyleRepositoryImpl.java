@@ -10,20 +10,20 @@ import java.util.List;
  * Created by nikitagusarov on 16.09.17.
  */
 
-public class TextStyleContainerImpl implements TextStyleContainer {
+public class TextStyleRepositoryImpl implements TextStyleRepository {
 
     private List<TextStyle> mTextStyles;
 
-    private static TextStyleContainer instance;
+    private static TextStyleRepository instance;
 
-    public static TextStyleContainer getInstance() {
+    public static TextStyleRepository getInstance() {
         if (instance == null) {
-            instance = new TextStyleContainerImpl();
+            instance = new TextStyleRepositoryImpl();
         }
         return instance;
     }
 
-    private TextStyleContainerImpl() {
+    private TextStyleRepositoryImpl() {
         mTextStyles = new ArrayList<>();
 
         init();

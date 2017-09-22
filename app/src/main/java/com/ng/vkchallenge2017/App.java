@@ -18,7 +18,8 @@ public class App extends Application {
         super.onCreate();
 
         initTimber();
-        initLeakCanary();
+        if (BuildConfig.DEBUG)
+            initLeakCanary();
         initVkSdk();
     }
 
@@ -27,7 +28,7 @@ public class App extends Application {
     }
 
     private void initLeakCanary() {
-//        LeakCanary.install(this);
+        LeakCanary.install(this);
     }
 
     private void initVkSdk() {
