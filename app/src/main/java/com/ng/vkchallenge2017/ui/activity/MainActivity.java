@@ -5,34 +5,26 @@ import android.graphics.drawable.GradientDrawable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 
-import com.arellomobile.mvp.MvpAppCompatActivity;
-import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.ng.vkchallenge2017.R;
 import com.ng.vkchallenge2017.Util.GradientDrawableFactory;
 import com.ng.vkchallenge2017.presentation.MainPresenter;
-import com.ng.vkchallenge2017.view.MainView;
+import com.ng.vkchallenge2017.view.MainViewContract;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
-import com.vk.sdk.util.VKUtil;
-
-import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import timber.log.Timber;
 
-public class MainActivity extends MvpAppCompatActivity implements MainView {
+public class MainActivity extends AppCompatActivity implements MainViewContract.View {
 
-    @InjectPresenter
-    MainPresenter mMainPresenter;
+    MainViewContract.Presenter mMainPresenter;
 
     @BindView(R.id.main_activity_layout)
     ConstraintLayout mConstraintLayoutMain;
@@ -45,7 +37,13 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        initPresenter();
+
         setUpGradient();
+    }
+
+    private void initPresenter() {
+        mMainPresenter = new MainPresenter(this);
     }
 
     private void setUpGradient() {

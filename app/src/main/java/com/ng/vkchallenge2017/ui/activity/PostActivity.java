@@ -10,7 +10,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -18,28 +17,23 @@ import android.support.constraint.ConstraintSet;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
-import com.arellomobile.mvp.MvpAppCompatActivity;
-import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.ng.vkchallenge2017.R;
 import com.ng.vkchallenge2017.Util.GradientDrawableFactory;
 import com.ng.vkchallenge2017.model.photo.PhotoSquareBase;
@@ -62,10 +56,8 @@ import com.ng.vkchallenge2017.ui.view.CustomImageView;
 import com.ng.vkchallenge2017.ui.view.KeyBoardListener;
 import com.ng.vkchallenge2017.ui.view.ProgressDialog;
 import com.ng.vkchallenge2017.ui.view.StickerDialog;
-import com.ng.vkchallenge2017.view.PostView;
+import com.ng.vkchallenge2017.view.PostViewContract;
 import com.vk.sdk.VKAccessToken;
-import com.vk.sdk.VKAccessTokenTracker;
-import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
@@ -78,8 +70,6 @@ import com.vk.sdk.api.model.VKPhotoArray;
 import com.vk.sdk.api.model.VKWallPostResult;
 import com.vk.sdk.api.photo.VKImageParameters;
 import com.vk.sdk.api.photo.VKUploadImage;
-import com.xiaopo.flying.sticker.BitmapStickerIcon;
-import com.xiaopo.flying.sticker.StickerView;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -89,26 +79,22 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-import static com.xiaopo.flying.sticker.BitmapStickerIcon.LEFT_TOP;
-
 
 /**
  * Created by nikitagusarov on 06.09.17.
  */
 
-public class PostActivity extends MvpAppCompatActivity implements PostView {
+public class PostActivity extends AppCompatActivity implements PostViewContract.View {
 
     public static final int MY_PERMISSIONS_REQUEST_READ_STORAGE = 13;
     public static final int REQUEST_CAMERA = 23;
     public static final int REQUEST_GALLERY = 33;
 
 
-    @InjectPresenter
-    PostPresenter mPostPresenter;
+    PostViewContract.Presenter mPostPresenter;
 
-    @ProvidePresenter
-    public PostPresenter providePresenter() {
-        return new PostPresenter(new PhotoRepositoryImpl(this), StickerRepositoryImpl.newInstance(this));
+    public PostViewContract.Presenter providePresenter() {
+        return new PostPresenter(this, new PhotoRepositoryImpl(this), StickerRepositoryImpl.newInstance(this));
     }
 
     @BindView(R.id.post_toolbar_left_button)
@@ -151,6 +137,8 @@ public class PostActivity extends MvpAppCompatActivity implements PostView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
         ButterKnife.bind(this);
+
+        mPostPresenter = providePresenter();
 
         moveStripToTop();
         disableClickAnimation();

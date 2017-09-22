@@ -1,15 +1,14 @@
 package com.ng.vkchallenge2017.presentation;
 
-import com.arellomobile.mvp.InjectViewState;
-import com.arellomobile.mvp.MvpPresenter;
+import android.support.annotation.NonNull;
+
 import com.ng.vkchallenge2017.repo.PhotoRepository;
 import com.ng.vkchallenge2017.repo.SquareRepository;
 import com.ng.vkchallenge2017.repo.SquareRepositoryImpl;
-import com.ng.vkchallenge2017.repo.StickerRepositoryImpl;
 import com.ng.vkchallenge2017.repo.StickerRepository;
 import com.ng.vkchallenge2017.repo.TextStyleContainer;
 import com.ng.vkchallenge2017.repo.TextStyleContainerImpl;
-import com.ng.vkchallenge2017.view.PostView;
+import com.ng.vkchallenge2017.view.PostViewContract;
 
 import timber.log.Timber;
 
@@ -21,9 +20,9 @@ import static com.ng.vkchallenge2017.repo.PhotoRepositoryImpl.MAX_SQUARE_COUNT;
  * Created by nikitagusarov on 06.09.17.
  */
 
-@InjectViewState
-public class PostPresenter extends MvpPresenter<PostView> {
+public class PostPresenter implements PostViewContract.Presenter {
 
+    private final PostViewContract.View mView;
     private SquareRepository mSquareRepository;
     private PhotoRepository mPhotoRepository;
     private TextStyleContainer mTextStyleContainer;
@@ -34,36 +33,35 @@ public class PostPresenter extends MvpPresenter<PostView> {
     private int photoPosition = 2;
     private int textStyleNum = 0;
 
-    public PostPresenter(PhotoRepository photoRepository, StickerRepository stickerRepository) {
+    public PostPresenter(@NonNull final PostViewContract.View postActivity,
+                         @NonNull final PhotoRepository photoRepository,
+                         @NonNull final StickerRepository stickerRepository) {
+        mView = postActivity;
         mPhotoRepository = photoRepository;
         mStickersRepository = stickerRepository;
         mSquareRepository = SquareRepositoryImpl.getInstance();
         mTextStyleContainer = TextStyleContainerImpl.getInstance();
-    }
 
-    @Override
-    protected void onFirstViewAttach() {
-        super.onFirstViewAttach();
-        getViewState().setBottomBarRecycler(mSquareRepository.getSquares());
-        getViewState().setAdapterData(mPhotoRepository.getPhotoSquares());
-        getViewState().setTextStyle(mTextStyleContainer.getStyle(textStyleNum));
-        getViewState().initStickersDialog(mStickersRepository.getStickers());
+        mView.setBottomBarRecycler(mSquareRepository.getSquares());
+        mView.setAdapterData(mPhotoRepository.getPhotoSquares());
+        mView.setTextStyle(mTextStyleContainer.getStyle(textStyleNum));
+        mView.initStickersDialog(mStickersRepository.getStickers());
     }
-
+    
     public void onSquareClick(final int position) {
         Timber.i("onSquareClick, pos: %d", position);
         if (position != mSquareRepository.getSquares().size() - 1) {
-            getViewState().disablePopup();
-            getViewState().setUpContent(mSquareRepository.getSquares().get(position));
+            mView.disablePopup();
+            mView.setUpContent(mSquareRepository.getSquares().get(position));
         } else {
             Timber.i("onSquareClick %b, %d", loaded, photoPosition);
-            getViewState().setUpPopup();
+            mView.setUpPopup();
 
             if (!loaded)
-                getViewState().checkPermission();
+                mView.checkPermission();
             else {
-                getViewState().setSelectedPhotoPosition(photoPosition);
-                getViewState().setUpPhoto(mPhotoRepository.getPhoto(photoPosition));
+                mView.setSelectedPhotoPosition(photoPosition);
+                mView.setUpPhoto(mPhotoRepository.getPhoto(photoPosition));
             }
         }
     }
@@ -76,7 +74,7 @@ public class PostPresenter extends MvpPresenter<PostView> {
             mMode = HISTORY;
         }
 
-        getViewState().setUpMode(mMode);
+        mView.setUpMode(mMode);
     }
 
     private void loadPhoto() {
@@ -84,16 +82,16 @@ public class PostPresenter extends MvpPresenter<PostView> {
             mPhotoRepository.loadPhotoFromGallery();
             loaded = true;
 
-            getViewState().setSelectedPhotoPosition(photoPosition);
-            getViewState().setUpPhoto(mPhotoRepository.getPhoto(photoPosition));
+            mView.setSelectedPhotoPosition(photoPosition);
+            mView.setUpPhoto(mPhotoRepository.getPhoto(photoPosition));
         }
     }
 
     public void textChange(final String text) {
         if (text.isEmpty()) {
-            getViewState().enableSentButton(false);
+            mView.enableSentButton(false);
         } else {
-            getViewState().enableSentButton(true);
+            mView.enableSentButton(true);
 
         }
     }
@@ -105,17 +103,17 @@ public class PostPresenter extends MvpPresenter<PostView> {
     public void onPhotoClick(final int position) {
         if (position > 1) {
             photoPosition = position;
-            getViewState().setUpPhoto(mPhotoRepository.getPhoto(position));
+            mView.setUpPhoto(mPhotoRepository.getPhoto(position));
         } else if (position == 0) {
-            getViewState().showCamera();
+            mView.showCamera();
         } else if (position == 1) {
-            getViewState().showGallery();
+            mView.showGallery();
         }
     }
 
     public void onButtonLeftClick() {
         int nextStyleNum = nextStyleNum();
-        getViewState().setTextStyle(mTextStyleContainer.getStyle(nextStyleNum));
+        mView.setTextStyle(mTextStyleContainer.getStyle(nextStyleNum));
     }
 
     private int nextStyleNum() {
@@ -130,17 +128,17 @@ public class PostPresenter extends MvpPresenter<PostView> {
     }
 
     public void onButtonRightClick() {
-        getViewState().showStickerDialog();
+        mView.showStickerDialog();
     }
 
     public void onStickerClick(final int position) {
         Timber.i("onStickerClick: pos: %d", position);
-        getViewState().closeStickerDialog();
-        getViewState().addSticker(mStickersRepository.getSticker(position));
+        mView.closeStickerDialog();
+        mView.addSticker(mStickersRepository.getSticker(position));
     }
 
     public void sendClick() {
-        getViewState().sendImageToWall();
+        mView.sendImageToWall();
     }
 
     public enum Mode {
