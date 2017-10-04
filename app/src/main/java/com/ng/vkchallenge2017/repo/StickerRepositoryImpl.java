@@ -27,7 +27,7 @@ public class StickerRepositoryImpl implements StickerRepository {
 
     private WeakReference<Context> mContextWeakReference;
 
-    public static StickerRepository newInstance(@NonNull final Context context) {
+    static StickerRepository newInstance(@NonNull final Context context) {
         if (instance == null)
             instance = new StickerRepositoryImpl(context);
         return instance;

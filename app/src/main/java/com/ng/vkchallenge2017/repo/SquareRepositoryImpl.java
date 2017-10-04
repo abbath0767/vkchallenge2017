@@ -20,7 +20,8 @@ import java.util.List;
 public class SquareRepositoryImpl implements SquareRepository{
 
     private static SquareRepository instance;
-    public static SquareRepository getInstance() {
+
+    static SquareRepository getInstance() {
         if (instance == null) {
             instance = new SquareRepositoryImpl();
         }

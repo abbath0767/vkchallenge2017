@@ -33,7 +33,7 @@ public class PhotoRepositoryImpl implements PhotoRepository {
 
     private static PhotoRepository instance;
 
-    public static PhotoRepository getInstance(Context context) {
+    static PhotoRepository getInstance(Context context) {
         if (instance == null)
             instance = new PhotoRepositoryImpl(context);
         return instance;

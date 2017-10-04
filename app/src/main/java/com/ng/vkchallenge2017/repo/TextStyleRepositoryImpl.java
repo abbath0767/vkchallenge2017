@@ -16,7 +16,7 @@ public class TextStyleRepositoryImpl implements TextStyleRepository {
 
     private static TextStyleRepository instance;
 
-    public static TextStyleRepository getInstance() {
+    static TextStyleRepository getInstance() {
         if (instance == null) {
             instance = new TextStyleRepositoryImpl();
         }
