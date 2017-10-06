@@ -66,6 +66,7 @@
     <dimen name="bucket_corner_disabled">48dp</dimen>
     <dimen name="bucket_outline_radius">24dp</dimen>
     <dimen name="bucket_outline_width">2dp</dimen>
+    <dimen name="default_elevation">2dp</dimen>
 
 
 </resources>

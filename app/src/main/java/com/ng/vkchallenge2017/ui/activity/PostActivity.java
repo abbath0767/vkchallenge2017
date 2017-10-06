@@ -421,6 +421,10 @@ public class PostActivity extends AppCompatActivity implements PostViewContract.
 
     @Override
     public void setAdapterData(final List<PhotoSquareBase> squares) {
+        if (mPopupSquareAdapter == null) {
+            mPopupSquareAdapter = new PopupSquareAdapter(this);
+        }
+
         mPopupSquareAdapter.setSquares(squares);
         mPopupSquareAdapter.notifyDataSetChanged();
         mPopupSquareAdapter.setSquareClickListener(new PopupSquareAdapter.SquareClickListener() {
@@ -436,7 +440,8 @@ public class PostActivity extends AppCompatActivity implements PostViewContract.
 
         final GridLayoutManager layoutManager = new GridLayoutManager(this, 2, OrientationHelper.HORIZONTAL, false);
         mPhotoRecyclerView.setLayoutManager(layoutManager);
-        mPopupSquareAdapter = new PopupSquareAdapter(this);
+        if (mPopupSquareAdapter == null)
+            mPopupSquareAdapter = new PopupSquareAdapter(this);
         mPhotoRecyclerView.setAdapter(mPopupSquareAdapter);
     }
 

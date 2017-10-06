@@ -1,5 +1,6 @@
 package com.ng.vkchallenge2017.ui.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -9,11 +10,9 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -22,12 +21,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.ng.vkchallenge2017.R;
-import com.ng.vkchallenge2017.Util.SpanColoredBackground;
 import com.ng.vkchallenge2017.model.photo.PhotoSquareBase;
 import com.ng.vkchallenge2017.model.sticker.Sticker;
 import com.ng.vkchallenge2017.model.text_style.TextStyle;
@@ -36,7 +33,6 @@ import com.xiaopo.flying.sticker.BitmapStickerIcon;
 import com.xiaopo.flying.sticker.StickerView;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +61,8 @@ public class CustomImageView extends RelativeLayout {
     StickerView mStickerView;
     @BindView(R.id.bucket_fab)
     BucketFab mBucketFab;
+    @BindView(R.id.image_parent)
+    ConstraintLayout mConstraintLayoutParent;
 
     private Context mContext;
 
@@ -82,6 +80,8 @@ public class CustomImageView extends RelativeLayout {
         }
     };
     private Rect mRectBucket;
+
+    private BackgroundEditText mBackgroundEditText;
 
     public CustomImageView(final Context context) {
         super(context);
@@ -307,32 +307,43 @@ public class CustomImageView extends RelativeLayout {
         Timber.i("setTextStyle %d %d", textStyle.getBackgroundColour(), textStyle.getTextColour());
         mPostEditText.setTextColor(ContextCompat.getColor(getContext(), textStyle.getTextColour()));
 
-        String text = mPostEditText.getText().toString();
-
-        Spannable span = new SpannableString(text);
-        span.setSpan(
-                new SpanColoredBackground(
-                        ContextCompat.getColor(mContext, textStyle.getBackgroundColour()),
-                        (int) getResources().getDimension(R.dimen.square_corner),
-                        (int) getResources().getDimension(R.dimen.square_corner)),
-                0,
-                text.length(),
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        mPostEditText.setTextColor(ContextCompat.getColor(getContext(), textStyle.getTextColour()));
-        mPostEditText.setText(span);
-
-        try {
-            Field field = TextView.class.getDeclaredField("mCursorDrawableRes");
-            field.setAccessible(true);
-            field.set(mPostEditText, textStyle.getCursorColour());
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        addBackgroundView(ContextCompat.getColor(getContext(), textStyle.getBackgroundColour()));
 
         mPostEditText.setSelection(mPostEditText.length());
+    }
+
+    @SuppressLint("NewApi")
+    private void addBackgroundView(@NonNull final int color) {
+        if (mBackgroundEditText != null || mPostEditText.length() == 0) {
+            mConstraintLayoutParent.removeView(mBackgroundEditText);
+            mBackgroundEditText = null;
+        }
+
+        if (color != android.R.color.transparent) {
+            mBackgroundEditText = new BackgroundEditText.Builder()
+                    .context(getContext())
+                    .forText(mPostEditText)
+                    .withColor(color)
+                    .withRadius(((int) getResources().getDimension(R.dimen.square_corner)))
+                    .withHorizontalPadding(((int) getResources().getDimension(R.dimen.text_corner)))
+                    .build();
+
+            mBackgroundEditText.setId(View.generateViewId());
+            ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(0, 0);
+            mBackgroundEditText.setLayoutParams(params);
+
+            ConstraintSet set = new ConstraintSet();
+            mConstraintLayoutParent.addView(mBackgroundEditText, 0);
+            set.clone(mConstraintLayoutParent);
+            set.connect(mBackgroundEditText.getId(), ConstraintSet.TOP, mPostEditText.getId(), ConstraintSet.TOP);
+            set.connect(mBackgroundEditText.getId(), ConstraintSet.BOTTOM, mPostEditText.getId(), ConstraintSet.BOTTOM);
+            set.connect(mBackgroundEditText.getId(), ConstraintSet.LEFT, mPostEditText.getId(), ConstraintSet.LEFT);
+            set.connect(mBackgroundEditText.getId(), ConstraintSet.RIGHT, mPostEditText.getId(), ConstraintSet.RIGHT);
+            set.applyTo(mConstraintLayoutParent);
+
+            mBackgroundEditText.bringToFront();
+            mPostEditText.bringToFront();
+        }
     }
 
     @Override
@@ -364,6 +375,7 @@ public class CustomImageView extends RelativeLayout {
         }
 
         mBucketFab.getHitRect(mRectBucket);
+        mBackgroundEditText.init();
     }
 
     private void growButton(boolean needGrow) {

@@ -6,6 +6,7 @@
     >
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/image_parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
